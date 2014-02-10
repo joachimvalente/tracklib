@@ -1,2 +1,9 @@
+# Ignore temporary files.
 *~
 
+# Ignore binary.
+tracklib-demo
+tracklib-demo.dSYM/
+
+# Ignore dependencies.
+.depend
