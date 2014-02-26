@@ -11,9 +11,10 @@ include_directories(${OpenCV_INCLUDE_DIRS})
 set(CMAKE_CXX_FLAGS "-g -Wall")
 
 # Subdirectory list.
-set(SUB_DIRS tl_core)
+set(SUB_DIRS tl_core tl_util)
 
 # Include source files.
+set(SRC_LIST ${SRC_LIST} common.h)
 aux_source_directory(. SRC_LIST)
 foreach(SUB_DIR ${SUB_DIRS})
   add_subdirectory(${SUB_DIR})
