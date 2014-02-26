@@ -1,2 +1,6 @@
+# Ignore some cmake files.
 CMakeLists.txt.user
+
+# Ignore temporary files.
+*~
 
