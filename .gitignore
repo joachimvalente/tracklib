@@ -4,3 +4,5 @@ CMakeLists.txt.user
 # Ignore temporary files.
 *~
 
+# Ignore main.cpp which is only used for local experimentations.
+main.cpp
