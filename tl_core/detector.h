@@ -66,10 +66,28 @@ public:
 
 protected:
   /*!
-   * \brief Retrieve current frame.
-   * \return Current frame.
+   * \brief Accessor for the frame.
+   * \return The current frame.
    */
   const cv::Mat &frame() const;
+
+  /*!
+   * \brief Accessor for the width.
+   * \return Width of sequence frames.
+   */
+  const int width() const;
+
+  /*!
+   * \brief Accessor for the height.
+   * \return Height of sequence frames.
+   */
+  const int height() const;
+
+  /*!
+   * \brief Accessor for number of channels.
+   * \return Number of channels in sequence frames.
+   */
+  const int channels() const;
 
 private:
   const cv::Mat initial_frame_;  //!< First frame of the sequence.
@@ -77,6 +95,10 @@ private:
   cv::Mat frame_;  //!< Current frame in the sequence.
   cv::Rect state_;  //!< Current estimate of the object state.
   float confidence_;  //!< Confidence \f$\in [0;1]\f$ of the current estimate.
+
+  const int width_;     //!< Width of frames.
+  const int height_;    //!< Height of frames.
+  const int channels_;  //!< Number of channels.
 };
 
 }  // namespace tl

@@ -13,6 +13,9 @@
 
 namespace tl {
 
+/*!
+ * \brief Dummy detector that leaves state estimate and confidence unchanged.
+ */
 class DummyDetector : public Detector {
 public:
   /*!

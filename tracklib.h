@@ -15,5 +15,6 @@
 
 // Detectors.
 #include "tl_detectors/dummydetector.h"
+#include "tl_detectors/templatematchingdetector.h"
 
 #endif  // TRACKLIB_TRACKLIB_H
