@@ -1,8 +1,6 @@
 /*!
  * \file common.h
- * \brief Common functions.
- *
- * This header should be included by every file in Tracklib.
+ * \brief Common functions and macros.
  * \author Joachim Valente <joachim.valente@gmail.com>
  */
 

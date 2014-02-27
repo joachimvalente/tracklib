@@ -6,7 +6,7 @@ using namespace cv;
 
 namespace tl {
 
-Rect FrameCanvas(const Mat &frame) {
+cv::Rect FrameCanvas(const cv::Mat &frame) {
   Rect canvas;
   canvas.x = 0;
   canvas.y = 0;
@@ -15,7 +15,7 @@ Rect FrameCanvas(const Mat &frame) {
   return canvas;
 }
 
-bool IsRectInsideFrame(const Mat &frame, Rect rect) {
+bool IsRectInsideFrame(const cv::Mat &frame, cv::Rect rect) {
   Rect canvas = FrameCanvas(frame);
   return canvas.contains(rect.tl()) && canvas.contains(rect.br());
 }
