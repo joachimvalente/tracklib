@@ -1,4 +1,4 @@
 tracklib
 ========
 
-Object Tracking Library
+**Tracklib** is a C++ online object tracking library.
