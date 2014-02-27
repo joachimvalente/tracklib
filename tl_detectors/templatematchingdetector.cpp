@@ -33,18 +33,19 @@ TemplateMatchingDetector::TemplateMatchingDetector(
 void TemplateMatchingDetector::Detect() {
   // Select distance function.
   SimilarityMeasure distance_function;
-  switch (flags_ & 0x00f0) {
+  switch (flags_ & 0x000f) {
     case kTemplateMatchingNcc:
       distance_function = NormalizedCrossCorrelationInv;
       break;
     case kTemplateMatchingMse:
-      distance_function = MeanSquareError;
+      distance_function = MeanSquaredError;
       break;
     case kTemplateMatchingPsnr:
       distance_function = PeakSignalToNoiseRatio;
       break;
     case kTemplateMatchingDssim:
       distance_function = StructuralDissimilarity;
+      break;
     case kTemplateMatchingSad:
       distance_function = SumOfAbsoluteDifferences;
       break;

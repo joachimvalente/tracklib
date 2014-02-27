@@ -41,16 +41,36 @@ float NormalizedCrossCorrelation(const cv::Mat &p, const cv::Mat &t);
 float NormalizedCrossCorrelationInv(const cv::Mat &p, const cv::Mat &t);
 
 /*!
- * \brief Compute mean square error (MSE).
+ * \brief Compute mean squared error (MSE).
+ * \param p Patch. Must be in CV_32FCx format.
+ * \param t Template. Must have same dimensions as `p`.
+ * \param exact Whether to compute exact value or not.
+ * \return MSE between the two patches.
+ * \note No safety checks for efficiency reasons.
+ */
+float MeanSquaredError(const cv::Mat &p, const cv::Mat &t, bool exact);
+
+/*!
+ * \brief Compute mean squared error (MSE) (not exact).
  * \param p Patch. Must be in CV_32FCx format.
  * \param t Template. Must have same dimensions as `p`.
  * \return MSE between the two patches.
  * \note No safety checks for efficiency reasons.
  */
-float MeanSquareError(const cv::Mat &p, const cv::Mat &t);
+float MeanSquaredError(const cv::Mat &p, const cv::Mat &t);
 
 /*!
  * \brief Compute sum of absolute differences (SAD).
+ * \param p Patch. Must be in CV_32FCx format.
+ * \param t Template. Must have same dimensions as `p`.
+ * \param exact Whether to compute exact value or not.
+ * \return SAD between the two patches.
+ * \note No safety checks for efficiency reasons.
+ */
+float SumOfAbsoluteDifferences(const cv::Mat &p, const cv::Mat &t, bool exact);
+
+/*!
+ * \brief Compute sum of absolute differences (SAD) (not exact).
  * \param p Patch. Must be in CV_32FCx format.
  * \param t Template. Must have same dimensions as `p`.
  * \return SAD between the two patches.
@@ -69,6 +89,18 @@ float PeakSignalToNoiseRatio(const cv::Mat &p, const cv::Mat &t);
 
 /*!
  * \brief Compute structural similarity (SSIM).
+ * \param p Patch. Must be in CV_32FCx format.
+ * \param t Template. Must have same dimensions as `p`.
+ * \param c1 Parameter \f$c_1\f$.
+ * \param c2 Parameter \f$c_2\f$.
+ * \return SSIM between the two patches.
+ * \note No safety checks for efficiency reasons.
+ */
+float StructuralSimilarity(const cv::Mat &p, const cv::Mat &t, float c1,
+                           float c2);
+
+/*!
+ * \brief Compute structural similarity (SSIM) with standard default values.
  * \param p Patch. Must be in CV_32FCx format.
  * \param t Template. Must have same dimensions as `p`.
  * \return SSIM between the two patches.

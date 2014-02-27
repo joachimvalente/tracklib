@@ -23,7 +23,7 @@ namespace tl {
 enum TemplateMatchingFlags {
   // Similarity measure.
   kTemplateMatchingNcc   = 0x0000,         //!< Normalized cross-correlation.
-  kTemplateMatchingMse   = 0x0001,         //!< Sum of square differences.
+  kTemplateMatchingMse   = 0x0001,         //!< Mean squared error.
   kTemplateMatchingPsnr  = 0x0002,         //!< Peak signal-to-noise ratio.
   kTemplateMatchingDssim = 0x0003,         //!< Structural dissimilarity.
   kTemplateMatchingSad   = 0x0004,         //!< Sum of absolute differences.

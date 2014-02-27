@@ -1,10 +1,14 @@
 #include "detector.h"
 
+#include <iostream>
+
 #include <opencv2/imgproc/imgproc.hpp>
+#include <opencv2/highgui/highgui.hpp>
 
 #include "../tl_util/opencv.h"
 
 using namespace cv;
+using namespace std;
 
 namespace tl {
 
@@ -94,10 +98,31 @@ void Detector::ConvertColor(Mat &frame) {
       }
       break;
     case kDetectorHue:
-    case kDetectorSaturation:
-    case kDetectorHs:
+    {
       cvtColor(frame, frame, CV_RGB2HSV);
+      vector<Mat> channels;
+      split(frame, channels);
+      merge(&channels[0], 1, frame);
       break;
+    }
+    case kDetectorSaturation:
+    {
+      cvtColor(frame, frame, CV_RGB2HSV);
+      vector<Mat> channels;
+      split(frame, channels);
+      merge(&channels[1], 1, frame);
+      multiply(frame, 255, frame);  // Saturation between 0 and 1.
+      break;
+    }
+    case kDetectorHs:
+    {
+      cvtColor(frame, frame, CV_RGB2HSV);
+      vector<Mat> channels;
+      split(frame, channels);
+      multiply(channels[1], 255, channels[1]);  // Saturation between 0 and 1.
+      merge(&channels[0], 2, frame);
+      break;
+    }
     case kDetectorRgb:
       break;
     default:
