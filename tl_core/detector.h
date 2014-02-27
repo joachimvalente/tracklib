@@ -129,6 +129,11 @@ private:
    */
   void ConvertColor(cv::Mat &frame);
 
+  /*!
+   * \brief Check for flags validity.
+   */
+  void CheckFlags() const;
+
   cv::Mat initial_frame_;         //!< First frame of the sequence.
   cv::Rect initial_state_;        //!< Initial state of the object to detect.
   cv::Mat frame_;                 //!< Current frame in the sequence.

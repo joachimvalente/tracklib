@@ -27,8 +27,7 @@ Detector::Detector(const cv::Mat &initial_frame, cv::Rect initial_state,
   CHECK(initial_state.area() > 0);
   CHECK_MSG(channels_ == 1 || channels_ == 3,
             "images have to be color or grayscale");
-  CHECK_MSG((g_flags & 0x000f) == kDetectorGrayscale || channels_ == 3,
-            "must use grayscale mode for grayscale images");
+  CheckFlags();
   initial_frame.convertTo(initial_frame_,
                           (channels_ == 1) ? CV_32F : CV_32FC3);
   ConvertColor(initial_frame_);
@@ -128,6 +127,18 @@ void Detector::ConvertColor(Mat &frame) {
     default:
       DIE;
   }
+}
+
+void Detector::CheckFlags() const {
+  int color_mode = g_flags_ & 0x000f;
+  CHECK_MSG(color_mode == kDetectorGrayscale ||
+            color_mode == kDetectorHue ||
+            color_mode == kDetectorSaturation ||
+            color_mode == kDetectorHs ||
+            color_mode == kDetectorRgb,
+            "invalid flags");
+  CHECK_MSG((g_flags_ & 0x000f) == kDetectorGrayscale || channels_ == 3,
+            "must use grayscale mode for grayscale images");
 }
 
 }  // namespace tl

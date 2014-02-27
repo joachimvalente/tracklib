@@ -19,6 +19,7 @@ TemplateMatchingDetector::TemplateMatchingDetector(
   Detector(initial_frame, initial_state, g_flags),
   flags_(flags),
   window_size_(20) {
+  CheckFlags();
   INFO(ToString());
 
   // Save model.
@@ -142,6 +143,25 @@ void TemplateMatchingDetector::set_window_size(int window_size) {
   } else {
     WARNING("window_size must be positive");
   }
+}
+
+void TemplateMatchingDetector::CheckFlags() const {
+  int similarity_measure = flags_ & 0x000f;
+  CHECK_MSG(similarity_measure == kTemplateMatchingNcc ||
+            similarity_measure == kTemplateMatchingMse ||
+            similarity_measure == kTemplateMatchingPsnr ||
+            similarity_measure == kTemplateMatchingDssim ||
+            similarity_measure == kTemplateMatchingSad,
+            "invalid flags");
+
+  int variant = flags_ & 0x00f0;
+  CHECK_MSG(variant == kTemplateMatchingBasic,
+            "invalid flags");
+
+  int gpu = flags_ & 0x0f00;
+  CHECK_MSG(gpu == kTemplateMatchingNone ||
+            gpu == kTemplateMatchingUseGpu,
+            "invalid flags");
 }
 
 }  // namespace tl

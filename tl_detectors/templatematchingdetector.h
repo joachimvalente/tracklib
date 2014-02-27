@@ -32,7 +32,10 @@ enum TemplateMatchingFlags {
   kTemplateMatchingBasic = 0x0000,         //!< Basic sliding-window method.
 
   // GPU.
-  kTemplateMatchingUseGpu = 0x0100         //!< Use GPU to compute similarity.
+  kTemplateMatchingUseGpu = 0x0100,        //!< Use GPU to compute similarity.
+
+  // No value.
+  kTemplateMatchingNone = 0x0000
 } BITFLAGS(TemplateMatchingFlags);
 
 /*!
@@ -74,6 +77,11 @@ public:
   void set_window_size(int window_size);
 
 private:
+  /*!
+   * \brief Check for flags validity.
+   */
+  void CheckFlags() const;
+
   const TemplateMatchingFlags flags_;
 
   cv::Mat template_;                //!< Template from initial frame.
