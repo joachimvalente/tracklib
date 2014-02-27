@@ -9,6 +9,7 @@
 
 #include <opencv2/core/core.hpp>
 
+#include "../common.h"
 #include "../tl_core/detector.h"
 
 namespace tl {
@@ -28,6 +29,9 @@ public:
    * \copydoc Detector::Detect()
    */
   virtual void Detect();
+
+private:
+  DISALLOW_COPY_AND_ASSIGN(DummyDetector);
 };
 
 }  // namespace tl

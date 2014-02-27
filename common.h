@@ -45,6 +45,43 @@
   } while (false)
 
 /*!
+ * \brief Die.
+ */
+#define DIE \
+  do { \
+    std::cerr << "Killed in " << __FILE__ \
+              << " line " << __LINE__ << std::endl; \
+    std::exit(EXIT_FAILURE); \
+  } while (false)
+
+/*!
+ * \brief Die with message.
+ */
+#define DIE_MSG(message) \
+  do { \
+    std::cerr << "Killed in " << __FILE__ \
+              << " line " << __LINE__ << ": " << message << std::endl; \
+    std::exit(EXIT_FAILURE); \
+  } while (false)
+
+/*!
+ * \brief Print a warning.
+ */
+#define WARNING(message) \
+  do { \
+    std::cerr << "Warning in " << __FILE__ \
+              << " line " << __LINE__ << ": " << message << std::endl; \
+  } while (false)
+
+/*!
+ * \brief Print info.
+ */
+#define INFO(message) \
+  do { \
+    std::cout << "[INFO] " << message << std::endl; \
+  } while (false)
+
+/*!
  * \brief Use enum as bit flags.
  */
 #define BITFLAGS(classname) \
@@ -54,5 +91,12 @@
     return static_cast<classname>(static_cast<int>(a) | static_cast<int>(b)); \
   } \
   MACRO_END
+
+/*!
+ * \brief Disallow copy and assign.
+ */
+#define DISALLOW_COPY_AND_ASSIGN(TypeName) \
+  TypeName(TypeName&) = delete;              \
+  void operator=(TypeName) = delete
 
 #endif  // TL_COMMON_H

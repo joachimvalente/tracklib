@@ -7,6 +7,9 @@
 #ifndef TL_TEMPLATEMATCHINGDETECTOR_H
 #define TL_TEMPLATEMATCHINGDETECTOR_H
 
+#include <string>
+#include <vector>
+
 #include <opencv2/core/core.hpp>
 
 #include "../common.h"
@@ -15,28 +18,21 @@
 namespace tl {
 
 /*!
- * \brief Variant of template matching algorithm.
- */
-enum class TemplateMatchingVariant {
-  kBasic       //!< Basic convolution.
-};
-
-/*!
  * \brief Flags for template matching.
  */
 enum TemplateMatchingFlags {
-  // Color channels. For grayscale images only kTemplateMatchingGrayscale is
-  // allowed.
-  kTemplateMatchingGrayscale = 0x0001,   //!< Use grayscale (intensity).
-  kTemplateMatchingHue = 0x0002,         //!< Use 1st channel of HSV.
-  kTemplateMatchingSaturation = 0x0003,  //!< Use 2nd channel of HSV.
-  kTemplateMatchingHs = 0x0004,          //!< Use first two channels of HSV.
-  kTemplateMatchingRgb = 0x0005,         //!< Use RGB values.
+  // Similarity measure.
+  kTemplateMatchingNcc   = 0x0000,         //!< Normalized cross-correlation.
+  kTemplateMatchingMse   = 0x0001,         //!< Sum of square differences.
+  kTemplateMatchingPsnr  = 0x0002,         //!< Peak signal-to-noise ratio.
+  kTemplateMatchingDssim = 0x0003,         //!< Structural dissimilarity.
+  kTemplateMatchingSad   = 0x0004,         //!< Sum of absolute differences.
 
-  // Measure mode.
-  kTemplateMatchingNcc = 0x0010,         //!< Normalized cross-correlation.
-  kTemplateMatchingSsd = 0x0010,         //!< Sum of square differences.
-  kTemplateMatchingSad = 0x0010,         //!< Sum of absolute differences.
+  // Variant.
+  kTemplateMatchingBasic = 0x0000,         //!< Basic sliding-window method.
+
+  // GPU.
+  kTemplateMatchingUseGpu = 0x0100         //!< Use GPU to compute similarity.
 } BITFLAGS(TemplateMatchingFlags);
 
 /*!
@@ -45,24 +41,46 @@ enum TemplateMatchingFlags {
 class TemplateMatchingDetector : public Detector {
 public:
   /*!
-   * \copydoc Detector(const cv::Mat &initial_frame, cv::Rect initial_state)
-   * \param variant Variant.
-   * \param flags Flags.
+   * \copydoc Detector(const cv::Mat&, cv::Rect, DetectorFlags)
+   * \param flags Template matching flags.
    */
   TemplateMatchingDetector(
       const cv::Mat &initial_frame,
       cv::Rect initial_state,
-      TemplateMatchingVariant variant = TemplateMatchingVariant::kBasic,
-      TemplateMatchingFlags flags = kTemplateMatchingHue);
+      DetectorFlags g_flags = kDetectorGrayscale,
+      TemplateMatchingFlags flags = kTemplateMatchingNcc |
+                                    kTemplateMatchingBasic);
 
   /*!
    * \copydoc Detector::Detect()
    */
   virtual void Detect();
 
+  /*!
+   * \copydoc Detector::ToString()
+   */
+  virtual std::string ToString() const;
+
+  /*!
+   * \brief Get window size.
+   * \return Window size.
+   */
+  int window_size() const;
+
+  /*!
+   * \brief Set window size.
+   * \param window_size Window size. Must be positive.
+   */
+  void set_window_size(int window_size);
+
 private:
-  const TemplateMatchingVariant variant_;
   const TemplateMatchingFlags flags_;
+
+  cv::Mat template_;                //!< Template from initial frame.
+
+  int window_size_;                 //!< Size of search window.
+
+  DISALLOW_COPY_AND_ASSIGN(TemplateMatchingDetector);
 };
 
 }  // namespace tl
