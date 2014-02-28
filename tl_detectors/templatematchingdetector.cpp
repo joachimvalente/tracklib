@@ -18,7 +18,8 @@ TemplateMatchingDetector::TemplateMatchingDetector(
     TemplateMatchingFlags flags) :
   Detector(initial_frame, initial_state, g_flags),
   flags_(flags),
-  window_size_(20) {
+  window_size_(20),
+  opencv_method_(CV_TM_SQDIFF) {
   CheckFlags();
   INFO(ToString());
 
@@ -26,12 +27,26 @@ TemplateMatchingDetector::TemplateMatchingDetector(
   template_ = Detector::initial_frame()(initial_state);
 
   // Normalization of the template (if using NCC).
-  if ((flags_ & 0x000f) == kTemplateMatchingNcc) {
+  if ((flags_ & 0x000f) == kTemplateMatchingNcc &&
+      (flags_ & 0x00f0) == kTemplateMatchingBasic) {
     Normalize(template_, template_);
   }
 }
 
 void TemplateMatchingDetector::Detect() {
+  switch (flags_ & 0x00f0) {
+    case kTemplateMatchingBasic:
+      DetectBasic();
+      break;
+    case kTemplateMatchingOpencv:
+      DetectOpencv();
+      break;
+    default:
+      DIE;
+  }
+}
+
+void TemplateMatchingDetector::DetectBasic() {
   // Select distance function.
   SimilarityMeasure distance_function;
   switch (flags_ & 0x000f) {
@@ -58,10 +73,18 @@ void TemplateMatchingDetector::Detect() {
   Rect roi = state();
   float min_distance = -1.0f;
   Rect argmin = state();
-  int min_x = std::max(0, state().x - window_size_);
-  int max_x = std::min(width() - template_.cols, state().x + window_size_);
-  int min_y = std::max(0, state().y - window_size_);
-  int max_y = std::min(height() - template_.rows, state().y + window_size_);
+  int min_x, max_x, min_y, max_y;
+  if (window_size_ > 0) {
+    min_x = std::max(0, state().x - window_size_);
+    max_x = std::min(width() - template_.cols, state().x + window_size_);
+    min_y = std::max(0, state().y - window_size_);
+    max_y = std::min(height() - template_.rows, state().y + window_size_);
+  } else {
+    min_x = 0;
+    max_x = width() - template_.cols;
+    min_y = 0;
+    max_y = height() - template_.rows;
+  }
   for (int i = min_x; i < max_x; ++i) {
     for (int j = min_y; j < max_y; ++j) {
       roi.x = i;
@@ -80,11 +103,31 @@ void TemplateMatchingDetector::Detect() {
   set_state(argmin);
 }
 
+void TemplateMatchingDetector::DetectOpencv() {
+  Mat result(frame().cols - template_.cols + 1,
+             frame().rows - template_.rows + 1,
+             CV_32FC1);
+
+  matchTemplate(frame(), template_, result, opencv_method_);
+  Point location;
+  if (opencv_method_ == CV_TM_SQDIFF || opencv_method_ == CV_TM_SQDIFF_NORMED) {
+    minMaxLoc(result, nullptr, nullptr, &location, nullptr);  // Locate min.
+  } else {
+    minMaxLoc(result, nullptr, nullptr, nullptr, &location);  // Locate max.
+  }
+  set_state(location);
+}
+
 std::string TemplateMatchingDetector::ToString() const {
-  string variant, color_mode, similarity_measure;
+  string variant, color_mode, similarity_measure, additional_info;
   switch (flags_ & 0x00f0) {
     case kTemplateMatchingBasic:
       variant = "basic";
+      additional_info = " windows_size=" + to_string(window_size_);
+      break;
+    case kTemplateMatchingOpencv:
+      variant = "opencv";
+      additional_info = " opencv_method=" + to_string(opencv_method_);
       break;
     default:
       DIE;
@@ -128,9 +171,12 @@ std::string TemplateMatchingDetector::ToString() const {
       DIE;
   }
 
+  if ((flags_ & 0x00f0) == kTemplateMatchingBasic) {
+    additional_info += " similarity_measure=" + similarity_measure;
+  }
+
   return "template matching detector [variant=" + variant + " color_mode=" +
-      color_mode + " similarity_measure=" + similarity_measure +
-      " windows_size=" + to_string(window_size_) + "]";
+      color_mode + additional_info + "]";
 }
 
 int TemplateMatchingDetector::window_size() const {
@@ -138,11 +184,27 @@ int TemplateMatchingDetector::window_size() const {
 }
 
 void TemplateMatchingDetector::set_window_size(int window_size) {
-  if (window_size > 0) {
+  CHECK_MSG((flags_ & 0x00f0) == kTemplateMatchingBasic,
+            "cannot set window size with this template matching variant");
+
+  if (window_size >= 0) {
     window_size_ = window_size;
   } else {
-    WARNING("window_size must be positive");
+    WARNING("window_size must be nonnegative - ignoring");
   }
+}
+
+void TemplateMatchingDetector::set_opencv_method(int opencv_method) {
+  CHECK_MSG((flags_ & 0x00f0) == kTemplateMatchingOpencv,
+            "not using OpenCV built-in function");
+  CHECK_MSG(opencv_method == CV_TM_CCOEFF ||
+            opencv_method == CV_TM_CCOEFF_NORMED ||
+            opencv_method == CV_TM_CCORR ||
+            opencv_method == CV_TM_CCORR_NORMED ||
+            opencv_method == CV_TM_SQDIFF ||
+            opencv_method == CV_TM_SQDIFF_NORMED,
+            "invalid OpenCV comparison method");
+  opencv_method_ = opencv_method;
 }
 
 void TemplateMatchingDetector::CheckFlags() const {
@@ -155,13 +217,13 @@ void TemplateMatchingDetector::CheckFlags() const {
             "invalid flags");
 
   int variant = flags_ & 0x00f0;
-  CHECK_MSG(variant == kTemplateMatchingBasic,
+  CHECK_MSG(variant == kTemplateMatchingBasic ||
+            variant == kTemplateMatchingOpencv,
             "invalid flags");
-
-  int gpu = flags_ & 0x0f00;
-  CHECK_MSG(gpu == kTemplateMatchingNone ||
-            gpu == kTemplateMatchingUseGpu,
-            "invalid flags");
+  if (variant == kTemplateMatchingOpencv && (g_flags() & 0x00f0) != kDetector8U)
+  {
+    DIE_MSG("must use CV_8U format with kTemplateMatchingOpencv");
+  }
 }
 
 }  // namespace tl

@@ -17,4 +17,8 @@
 #include "tl_detectors/dummydetector.h"
 #include "tl_detectors/templatematchingdetector.h"
 
+#ifdef TL_CUDA
+# include "tl_gpu/templatematchingdetectorgpu.h"
+#endif  // ifdef TL_CUDA
+
 #endif  // TRACKLIB_TRACKLIB_H

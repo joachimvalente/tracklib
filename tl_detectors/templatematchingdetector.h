@@ -22,17 +22,16 @@ namespace tl {
  */
 enum TemplateMatchingFlags {
   // Similarity measure.
-  kTemplateMatchingNcc   = 0x0000,         //!< Normalized cross-correlation.
-  kTemplateMatchingMse   = 0x0001,         //!< Mean squared error.
-  kTemplateMatchingPsnr  = 0x0002,         //!< Peak signal-to-noise ratio.
-  kTemplateMatchingDssim = 0x0003,         //!< Structural dissimilarity.
-  kTemplateMatchingSad   = 0x0004,         //!< Sum of absolute differences.
+  kTemplateMatchingNcc    = 0x0000,        //!< Normalized cross-correlation.
+  kTemplateMatchingMse    = 0x0001,        //!< Mean squared error.
+  kTemplateMatchingPsnr   = 0x0002,        //!< Peak signal-to-noise ratio.
+  kTemplateMatchingDssim  = 0x0003,        //!< Structural dissimilarity.
+  kTemplateMatchingSad    = 0x0004,        //!< Sum of absolute differences.
 
   // Variant.
-  kTemplateMatchingBasic = 0x0000,         //!< Basic sliding-window method.
-
-  // GPU.
-  kTemplateMatchingUseGpu = 0x0100,        //!< Use GPU to compute similarity.
+  kTemplateMatchingBasic  = 0x0000,        //!< Basic sliding-window method.
+  kTemplateMatchingOpencv = 0x0010,        //!< Use OpenCV built-in function
+                                           //!  (set via ~set_opencv_method()`).
 
   // No value.
   kTemplateMatchingNone = 0x0000
@@ -72,11 +71,34 @@ public:
 
   /*!
    * \brief Set window size.
-   * \param window_size Window size. Must be positive.
+   * \param window_size Window size. Must be positive, or 0 to search the entire
+   * image.
    */
   void set_window_size(int window_size);
 
+  /*!
+   * \brief Get OpenCV comparison method.
+   * \return OpenCV comparison method.
+   */
+  int opencv_method() const;
+
+  /*!
+   * \brief Set OpenCV comparison method.
+   * \param opencv_method OpenCV comparison method.
+   */
+  void set_opencv_method(int opencv_method);
+
 private:
+  /*!
+   * \brief Detect using basic sliding-window method.
+   */
+  void DetectBasic();
+
+  /*!
+   * \brief Detect using OpenCV built-in `matchTemplate()` function.
+   */
+  void DetectOpencv();
+
   /*!
    * \brief Check for flags validity.
    */
@@ -87,6 +109,8 @@ private:
   cv::Mat template_;                //!< Template from initial frame.
 
   int window_size_;                 //!< Size of search window.
+
+  int opencv_method_;               //!< OpenCV comparison method.
 
   DISALLOW_COPY_AND_ASSIGN(TemplateMatchingDetector);
 };

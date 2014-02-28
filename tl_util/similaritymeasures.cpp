@@ -17,7 +17,7 @@ namespace tl {
  * and the square root of the number of elements, i.e. dividing by the norm
  * of the deviation to the mean.
  */
-void Normalize(const cv::Mat &in, cv::Mat &out) {
+void Normalize(const cv::Mat &in, Mat &out) {
   subtract(in, mean(in), out);
   divide(out, norm(out), out);
 }

@@ -14,13 +14,15 @@ namespace tl {
 
 Detector::Detector(const cv::Mat &initial_frame, cv::Rect initial_state,
                    DetectorFlags g_flags) :
-  initial_state_(initial_state),
-  state_(initial_state),
-  confidence_(1.0f),
   width_(initial_frame.cols),
   height_(initial_frame.rows),
   channels_(initial_frame.channels()),
-  g_flags_(g_flags) {
+  g_flags_(g_flags),
+  initial_frame_(ConvertColorAndType(initial_frame)),
+  initial_state_(initial_state),
+  frame_(initial_frame_.clone()),
+  state_(initial_state),
+  confidence_(1.0f) {
   CHECK_NOTNULL(initial_frame.data);
   CHECK(FrameCanvas(initial_frame).area() > 0);
   CHECK(IsRectInsideFrame(initial_frame, initial_state));
@@ -28,10 +30,6 @@ Detector::Detector(const cv::Mat &initial_frame, cv::Rect initial_state,
   CHECK_MSG(channels_ == 1 || channels_ == 3,
             "images have to be color or grayscale");
   CheckFlags();
-  initial_frame.convertTo(initial_frame_,
-                          (channels_ == 1) ? CV_32F : CV_32FC3);
-  ConvertColor(initial_frame_);
-  initial_frame_.copyTo(frame_);
 }
 
 void Detector::NextFrame(const Mat &frame) {
@@ -41,8 +39,7 @@ void Detector::NextFrame(const Mat &frame) {
   CHECK(frame.rows == height_);
   CHECK(frame.channels() == channels_);
 
-  frame.convertTo(frame_, (channels_ == 1) ? CV_32F : CV_32FC3);
-  ConvertColor(frame_);
+  ConvertColorAndType(frame, frame_);
 }
 
 cv::Rect Detector::state() const {
@@ -55,10 +52,23 @@ float Detector::confidence() const {
 
 void Detector::set_state(Rect state, float confidence) {
   CHECK(0.0f <= confidence && confidence <= 1.0f);
-  CHECK(IsRectInsideFrame(frame_, state));
-  CHECK(state.area() > 0);
-  state_ = state;
-  confidence_ = confidence;
+  if (!IsRectInsideFrame(frame_, state)) {
+    confidence_ = 0.0f;
+    WARNING("given state is outside the frame - ignoring");
+  } else if (state.area() == 0) {
+    confidence_ = 0.0f;
+    WARNING("given state is empty - ignoring");
+  } else {
+    state_ = state;
+    confidence_ = confidence;
+  }
+}
+
+void Detector::set_state(Point tl, float confidence) {
+  Rect state = state_;
+  state.x = tl.x;
+  state.y = tl.y;
+  set_state(state, confidence);
 }
 
 std::string Detector::ToString() const {
@@ -67,6 +77,10 @@ std::string Detector::ToString() const {
 
 const cv::Mat &Detector::initial_frame() const {
   return initial_frame_;
+}
+
+const cv::Rect &Detector::initial_state() const {
+  return initial_state_;
 }
 
 const cv::Mat &Detector::frame() const {
@@ -89,43 +103,54 @@ DetectorFlags Detector::g_flags() const {
   return g_flags_;
 }
 
-void Detector::ConvertColor(Mat &frame) {
+cv::Mat Detector::ConvertColorAndType(const Mat &in) {
+  Mat out;
+  ConvertColorAndType(in, out);
+  return out;
+}
+
+void Detector::ConvertColorAndType(const Mat &in, Mat& out) {
   switch (g_flags_ & 0x000f) {
     case kDetectorGrayscale:
       if (channels_ == 3) {
-        cvtColor(frame, frame, CV_RGB2GRAY);
+        cvtColor(in, out, CV_RGB2GRAY);
       }
       break;
     case kDetectorHue:
     {
-      cvtColor(frame, frame, CV_RGB2HSV);
+      cvtColor(in, out, CV_RGB2HSV);
       vector<Mat> channels;
-      split(frame, channels);
-      merge(&channels[0], 1, frame);
+      split(out, channels);
+      merge(&channels[0], 1, out);
       break;
     }
     case kDetectorSaturation:
     {
-      cvtColor(frame, frame, CV_RGB2HSV);
+      cvtColor(in, out, CV_RGB2HSV);
       vector<Mat> channels;
-      split(frame, channels);
-      merge(&channels[1], 1, frame);
-      multiply(frame, 255, frame);  // Saturation between 0 and 1.
+      split(out, channels);
+      merge(&channels[1], 1, out);
+      multiply(out, 255, out);  // Saturation between 0 and 1.
       break;
     }
     case kDetectorHs:
     {
-      cvtColor(frame, frame, CV_RGB2HSV);
+      cvtColor(in, out, CV_RGB2HSV);
       vector<Mat> channels;
-      split(frame, channels);
+      split(out, channels);
       multiply(channels[1], 255, channels[1]);  // Saturation between 0 and 1.
-      merge(&channels[0], 2, frame);
+      merge(&channels[0], 2, out);
       break;
     }
     case kDetectorRgb:
+      out = in.clone();
       break;
     default:
       DIE;
+  }
+
+  if ((g_flags_ & 0x00f0) == kDetector32F) {
+    out.convertTo(out, (channels_ == 1) ? CV_32F : CV_32FC3);
   }
 }
 
@@ -139,6 +164,11 @@ void Detector::CheckFlags() const {
             "invalid flags");
   CHECK_MSG((g_flags_ & 0x000f) == kDetectorGrayscale || channels_ == 3,
             "must use grayscale mode for grayscale images");
+
+  int value_type = g_flags_ & 0x00f0;
+  CHECK_MSG(value_type == kDetector32F ||
+            value_type == kDetector8U,
+            "invalid flags");
 }
 
 }  // namespace tl
