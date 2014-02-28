@@ -14,7 +14,7 @@ find_package(OpenCV REQUIRED)
 include_directories(${OpenCV_INCLUDE_DIRS})
 
 # Compiler settings.
-set(CMAKE_CXX_FLAGS "-g -Wall -std=c++11")
+set(CMAKE_CXX_FLAGS "-g -Wall -Wno-overloaded-virtual -std=c++11")
 
 # Subdirectory list.
 set(SUB_DIRS tl_core
@@ -23,7 +23,7 @@ set(SUB_DIRS tl_core
 
 # Include source files.
 include_directories(.)
-set(SRC_LIST ${SRC_LIST} common.h tracklib.h main.cpp)
+set(SRC_LIST ${SRC_LIST} common.h tracklib.h)
 aux_source_directory(. SRC_LIST)
 foreach(SUB_DIR ${SUB_DIRS})
   add_subdirectory(${SUB_DIR})

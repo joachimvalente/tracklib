@@ -1,7 +1,7 @@
 # Find OpenCV Library
 # Joachim Valente <joachim.valente@gmail.com>
 # Note: Found this file here https://compilr.com/mitchell/nubots-robocup/Make/CMakeModules/FindOPENCV.cmake
-# Made a couple additions to the typical places.
+# Made a couple additions to the typical install locations.
 
 ###########################################################
 #                  Find OpenCV Library
@@ -115,7 +115,7 @@ SET(OpenCV_INCLUDE_DIRS "${OPENCV_PATH}/include/opencv;${THIS_OPENCV_CONFIG_PATH
                         "${OPENCV_PATH}/include")
 
 INCLUDE_DIRECTORIES(${OpenCV_INCLUDE_DIRS})
-message(STATUS "Includes: " ${OpenCV_INCLUDE_DIRS})
+message(STATUS "OpenCV include dirs: " ${OpenCV_INCLUDE_DIRS})
 
 # ======================================================
 # Link directories to add to the user project:
@@ -151,8 +151,8 @@ foreach(__CVLIB ${OPENCV_LIB_COMPONENTS})
     endif(CMAKE_MAJOR_VERSION GREATER 2  OR  CMAKE_MINOR_VERSION GREATER 4)
 endforeach(__CVLIB)
 
-message(STATUS "Lib directory: " ${OpenCV_LIB_DIR})
-message(STATUS "Libs: " ${OpenCV_LIBS})
+message(STATUS "OpenCV lib directory: " ${OpenCV_LIB_DIR})
+message(STATUS "OpenCV libs: " ${OpenCV_LIBS})
 
 # ==============================================================
 #  Extra include directories, needed by OpenCV 2 new structure

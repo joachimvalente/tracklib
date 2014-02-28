@@ -1,6 +1,6 @@
-#include "detector.h"
+#include "tl_core/detector.h"
 
-#include "tl_util/opencv.h"
+#include "tl_util/geometry.h"
 
 using namespace cv;
 

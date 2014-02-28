@@ -1,4 +1,4 @@
-#include "dummydetector.h"
+#include "tl_detectors/dummydetector.h"
 
 using namespace cv;
 
