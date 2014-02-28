@@ -10,7 +10,6 @@
 //--------------------- Included for easy debugging ---------------
 #include <iostream>
 #include <opencv2/opencv.hpp>
-using namespace cv;
 using namespace std;
 
 //-------------------- Macros for safety checks ------------------------

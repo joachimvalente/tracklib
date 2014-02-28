@@ -21,10 +21,11 @@ namespace tl {
  */
 class DummyDetector : public Detector {
 public:
+  //------------------------- Constructor -----------------------
   DummyDetector(const cv::Mat &inital_frame, cv::Rect initial_state);
 
+  //------------------------ Main functions ---------------------
   virtual void Detect();
-
   virtual std::string ToString() const;
 
 private:

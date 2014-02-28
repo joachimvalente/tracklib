@@ -51,15 +51,13 @@ cv::Rect Detector::get_state() const {
 void Detector::set_state(cv::Rect state, float confidence) {
   CHECK(0.0f <= confidence && confidence <= 1.0f);
   if (!IsRectInsideFrame(state, frame_)) {
-    confidence_ = 0.0f;
-    WARNING("given state is outside the frame - ignoring");
+    WARNING("given state " << state << " is outside the frame");
   } else if (state.area() == 0) {
-    confidence_ = 0.0f;
-    WARNING("given state is empty - ignoring");
-  } else {
-    state_ = state;
-    confidence_ = confidence;
+    WARNING("given state is empty");
   }
+
+  state_ = state;
+  confidence_ = confidence;
 }
 
 void Detector::set_state(cv::Point tl, float confidence) {
@@ -79,31 +77,35 @@ void Detector::set_confidence(float confidence) {
 }
 
 //------------------------- Protected accessors ---------------------
-const cv::Mat &Detector::initial_frame() const {
+const cv::Mat &Detector::get_initial_frame() const {
   return initial_frame_;
 }
 
-const cv::Rect &Detector::initial_state() const {
+Mat Detector::get_initial_frame(Rect roi) const {
+  return initial_frame_(roi);
+}
+
+const cv::Rect &Detector::get_initial_state() const {
   return initial_state_;
 }
 
-const cv::Mat &Detector::frame() const {
+const cv::Mat &Detector::get_frame() const {
   return frame_;
 }
 
-int Detector::width() const {
+int Detector::get_width() const {
   return width_;
 }
 
-int Detector::height() const {
+int Detector::get_height() const {
   return height_;
 }
 
-int Detector::channels() const {
+int Detector::get_channels() const {
   return channels_;
 }
 
-int Detector::depth() const {
+int Detector::get_depth() const {
   return depth_;
 }
 

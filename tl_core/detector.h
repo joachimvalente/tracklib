@@ -13,6 +13,8 @@
 
 #include "common.h"
 
+using namespace cv;
+
 namespace tl {
 
 /*!
@@ -28,7 +30,6 @@ namespace tl {
  */
 class Detector {
 public:
-
   //--------------------- Constructor -----------------
   /*!
    * \brief Constructor.
@@ -80,18 +81,17 @@ public:
   void set_confidence(float confidence);
 
 protected:
-
   //---------------- Protected accessors -------------------
-  const cv::Mat &initial_frame() const;
-  const cv::Rect &initial_state() const;
-  const cv::Mat &frame() const;
-  int width() const;
-  int height() const;
-  int channels() const;
-  int depth() const;
+  const cv::Mat &get_initial_frame() const;
+  Mat get_initial_frame(cv::Rect roi) const;
+  const cv::Rect &get_initial_state() const;
+  const cv::Mat &get_frame() const;
+  int get_width() const;
+  int get_height() const;
+  int get_channels() const;
+  int get_depth() const;
 
 private:
-
   //-------------------- Internal members ---------------------
   const int width_;               //!< Width of frames.
   const int height_;              //!< Height of frames.

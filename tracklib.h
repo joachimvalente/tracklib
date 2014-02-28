@@ -15,6 +15,8 @@
 
 //----------------------- Detectors --------------------
 #include "tl_detectors/dummydetector.h"
+#include "tl_detectors/meanshiftdetector.h"
+#include "tl_detectors/templatematchingdetector.h"
 
 //-------------------------- Gpu ------------------------
 #ifdef TL_CUDA
