@@ -22,7 +22,8 @@ set(SUB_DIRS tl_core
              tl_util)
 
 # Include source files.
-set(SRC_LIST ${SRC_LIST} common.h tracklib.h)
+include_directories(.)
+set(SRC_LIST ${SRC_LIST} common.h tracklib.h main.cpp)
 aux_source_directory(. SRC_LIST)
 foreach(SUB_DIR ${SUB_DIRS})
   add_subdirectory(${SUB_DIR})

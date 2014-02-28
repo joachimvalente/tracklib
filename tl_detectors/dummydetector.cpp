@@ -13,4 +13,8 @@ DummyDetector::DummyDetector(const cv::Mat &initial_frame,
  */
 void DummyDetector::Detect() {}
 
+std::string DummyDetector::ToString() const {
+  return "dummy detector";
+}
+
 }  // namespace tl

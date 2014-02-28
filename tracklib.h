@@ -13,10 +13,10 @@
 #ifndef TRACKLIB_TRACKLIB_H
 #define TRACKLIB_TRACKLIB_H
 
-// Detectors.
+//----------------------- Detectors --------------------
 #include "tl_detectors/dummydetector.h"
-#include "tl_detectors/templatematchingdetector.h"
 
+//-------------------------- Gpu ------------------------
 #ifdef TL_CUDA
 # include "tl_gpu/templatematchingdetectorgpu.h"
 #endif  // ifdef TL_CUDA

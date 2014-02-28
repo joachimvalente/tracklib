@@ -7,14 +7,13 @@
 #ifndef TL_COMMON_H
 #define TL_COMMON_H
 
+//--------------------- Included for easy debugging ---------------
 #include <iostream>
+#include <opencv2/opencv.hpp>
+using namespace cv;
+using namespace std;
 
-//! \cond DoxygenIgnore
-// Trick to allow semi-colon at the end of macros used outside functions.
-#define MACRO_END \
-  extern void nL3ewN8Too8Um2kCCU1NnIL4Q9z8phYslgWk7W8JrvunxPA8L8whgSyDPL4lJyxEU
-//! \endcond
-
+//-------------------- Macros for safety checks ------------------------
 /*!
  * \brief Die if `condition` is not verified.
  */
@@ -64,6 +63,7 @@
     std::exit(EXIT_FAILURE); \
   } while (false)
 
+//---------------------- Macros for debugging -----------------------
 /*!
  * \brief Print a warning.
  */
@@ -80,6 +80,13 @@
   do { \
     std::cout << "[INFO] " << message << std::endl; \
   } while (false)
+
+//------------------------- Other macros ------------------------------
+//! \cond DoxygenIgnore
+// Trick to allow semi-colon at the end of macros used outside functions.
+#define MACRO_END \
+  extern void nL3ewN8Too8Um2kCCU1NnIL4Q9z8phYslgWk7W8JrvunxPA8L8whgSyDPL4lJyxEU
+//! \endcond
 
 /*!
  * \brief Use enum as bit flags.
