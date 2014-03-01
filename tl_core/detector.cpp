@@ -3,6 +3,7 @@
 #include "tl_util/geometry.h"
 
 using namespace cv;
+using namespace tl::internal;
 
 namespace tl {
 
@@ -44,7 +45,7 @@ std::string Detector::ToString() const {
 }
 
 //--------------------------- Public accessors -----------------------
-cv::Rect Detector::get_state() const {
+cv::Rect Detector::state() const {
   return state_;
 }
 
@@ -67,7 +68,7 @@ void Detector::set_state(cv::Point tl, float confidence) {
   set_state(state, confidence);
 }
 
-float Detector::get_confidence() const {
+float Detector::confidence() const {
   return confidence_;
 }
 
@@ -77,35 +78,35 @@ void Detector::set_confidence(float confidence) {
 }
 
 //------------------------- Protected accessors ---------------------
-const cv::Mat &Detector::get_initial_frame() const {
+const cv::Mat &Detector::initial_frame() const {
   return initial_frame_;
 }
 
-Mat Detector::get_initial_frame(Rect roi) const {
+Mat Detector::initial_frame(Rect roi) const {
   return initial_frame_(roi);
 }
 
-const cv::Rect &Detector::get_initial_state() const {
+const cv::Rect &Detector::initial_state() const {
   return initial_state_;
 }
 
-const cv::Mat &Detector::get_frame() const {
+const cv::Mat &Detector::frame() const {
   return frame_;
 }
 
-int Detector::get_width() const {
+int Detector::width() const {
   return width_;
 }
 
-int Detector::get_height() const {
+int Detector::height() const {
   return height_;
 }
 
-int Detector::get_channels() const {
+int Detector::channels() const {
   return channels_;
 }
 
-int Detector::get_depth() const {
+int Detector::depth() const {
   return depth_;
 }
 

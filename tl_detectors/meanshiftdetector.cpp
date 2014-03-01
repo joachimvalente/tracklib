@@ -19,21 +19,21 @@ MeanshiftDetector::MeanshiftDetector(const cv::Mat &initial_frame,
 void MeanshiftDetector::Detect() {
   // Compute back projection of the histogram.
   Mat back_proj, converted_frame;
-  if (get_channels() == 3) {
-    cvtColor(get_frame(), converted_frame, CV_RGB2HSV);
+  if (channels() == 3) {
+    cvtColor(frame(), converted_frame, CV_RGB2HSV);
   } else {
-    converted_frame = get_frame();
+    converted_frame = frame();
   }
   calcBackProject(&converted_frame, 1, cn_, histogram_, back_proj, ranges_);
 
   // Apply meanshift or Camshift.
   TermCriteria term_crit(CV_TERMCRIT_EPS | CV_TERMCRIT_ITER, max_iter_, 1);
   if (variant_ == TL_MEANSHIFT) {
-    Rect s = get_state();
+    Rect s = state();
     cv::meanShift(back_proj, s, term_crit);
     set_state(s);
   } else {
-    Rect s = get_state();
+    Rect s = state();
     set_state(cv::CamShift(back_proj, s, term_crit).boundingRect());
   }
 }
@@ -50,8 +50,8 @@ void MeanshiftDetector::set_variant(MeanshiftVariant variant) {
 
 void MeanshiftDetector::set_channels_to_use(Channels channels_to_use) {
   CHECK_MSG(((channels_to_use == TL_H || channels_to_use == TL_S ||
-              channels_to_use == TL_HS) && get_channels() == 3) ||
-            (channels_to_use == TL_GRAY && get_channels() == 1),
+              channels_to_use == TL_HS) && channels() == 3) ||
+            (channels_to_use == TL_GRAY && channels() == 1),
             "only TL_H, TL_S, TL_HS (for color) and TL_GRAY (for gray) are "
             "supported");
   channels_to_use_ = channels_to_use;
@@ -100,8 +100,8 @@ void MeanshiftDetector::ComputeTemplateHistogram() {
   }
 
   // Compute histogram.
-  Mat object = get_initial_frame(get_initial_state());
-  if (get_channels() == 3) {
+  Mat object = initial_frame(initial_state());
+  if (channels() == 3) {
     Mat hsv_object;
     Mat mask;
     cvtColor(object, hsv_object, CV_RGB2HSV);

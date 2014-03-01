@@ -3,7 +3,7 @@ cmake_minimum_required(VERSION 2.8)
 project(Tracklib)
 
 # Cuda dependency.
-#find_package(CUDA)
+find_package(CUDA)
 if(DEFINED CUDA_INCLUDE_DIRS)
   include_directories(${CUDA_INCLUDE_DIRS})
 endif()

@@ -22,7 +22,7 @@ namespace tl {
  * - Initialize with an initial frame and an initial state (= OpenCV Rect).
  * - Feed new frames online via `NextFrame()`.
  * - Run the detector via `Detect()`.
- * - Get new state via `get_state()` and confidence via `get_confidence()`.
+ * - Get new state via `state()` and confidence via `confidence()`.
  * .
  * Children classes must implement the `Detect()` method.
  * All fed images must be of same dimensions and type. They must be grayscale or
@@ -57,7 +57,7 @@ public:
   virtual std::string ToString() const;
 
   //----------------------- Accessors -----------------------
-  cv::Rect get_state() const;
+  cv::Rect state() const;
 
   /*!
    * \brief Set the state estimate. Can be called be child class
@@ -73,7 +73,7 @@ public:
    */
   void set_state(cv::Point tl, float confidence = 1);
 
-  float get_confidence() const;
+  float confidence() const;
 
   /*!
    * \param confidence Confidence measure \f$ \in [0; 1] \f$.
@@ -82,14 +82,14 @@ public:
 
 protected:
   //---------------- Protected accessors -------------------
-  const cv::Mat &get_initial_frame() const;
-  Mat get_initial_frame(cv::Rect roi) const;
-  const cv::Rect &get_initial_state() const;
-  const cv::Mat &get_frame() const;
-  int get_width() const;
-  int get_height() const;
-  int get_channels() const;
-  int get_depth() const;
+  const cv::Mat &initial_frame() const;
+  Mat initial_frame(cv::Rect roi) const;
+  const cv::Rect &initial_state() const;
+  const cv::Mat &frame() const;
+  int width() const;
+  int height() const;
+  int channels() const;
+  int depth() const;
 
 private:
   //-------------------- Internal members ---------------------

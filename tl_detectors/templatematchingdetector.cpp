@@ -1,5 +1,7 @@
 #include "tl_detectors/templatematchingdetector.h"
 
+using namespace cv;
+
 namespace tl {
 
 //------------------------- Constructor -------------------------
@@ -12,7 +14,7 @@ TemplateMatchingDetector::TemplateMatchingDetector(const Mat &initial_frame,
 //------------------------- Main methods ------------------------
 void TemplateMatchingDetector::Detect() {
   Mat result;
-  matchTemplate(get_frame(), template_, result, opencv_method_);
+  matchTemplate(frame(), template_, result, opencv_method_);
 
   Point location;
   if (opencv_method_ == CV_TM_SQDIFF || opencv_method_ == CV_TM_SQDIFF_NORMED) {

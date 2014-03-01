@@ -10,12 +10,14 @@
 #include <opencv2/core/core.hpp>
 
 namespace tl {
+namespace internal {
 
 /*!
  * \brief Check if given rect is inside a frame canvas.
  */
 bool IsRectInsideFrame(cv::Rect rect, const cv::Mat &frame);
 
+}  // namespace internal
 }  // namespace tl
 
 #endif  // TL_GEOMETRY_H
