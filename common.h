@@ -105,4 +105,9 @@ using namespace std;
   TypeName(TypeName&) = delete;              \
   void operator=(TypeName) = delete
 
+/*!
+ * \brief Silence warning about unused variable.
+ */
+#define UNUSED(a) ((void)(a))
+
 #endif  // TL_COMMON_H

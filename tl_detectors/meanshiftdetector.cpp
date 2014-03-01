@@ -94,7 +94,8 @@ void MeanshiftDetector::ComputeTemplateHistogram() {
       bin_sizes[1] = bin_size_s;
       cn_[0] = 1;
       break;
-    default:
+    case TL_RGB:
+    case TL_HSV:
       DIE;
   }
 
