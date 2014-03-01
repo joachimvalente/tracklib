@@ -28,7 +28,7 @@ enum MeanshiftVariant {
 class MeanshiftDetector : public Detector {
 public:
   //--------------------------- Constructor --------------------------
-  MeanshiftDetector(const cv::Mat &initial_frame, cv::Rect initial_state);
+  MeanshiftDetector(const Mat &initial_frame, Rect initial_state);
 
   //------------------------- Main functions -------------------------
   void Detect();

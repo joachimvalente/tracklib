@@ -36,6 +36,28 @@ public:
                const cv::Mat &R,
                const cv::Mat &x0);
 
+  /*!
+   * \brief Construct a Kalman filter for standard tracking model.
+   *
+   * \f$ F = \left( \begin{array}{cccc} I_2 & I_2 & 0 & 0 \\ 0 & I_2 & 0 & 0 \\
+   * 0 & 0 & I_2 & I_2 \\ 0 & 0 & 0 & I_2 \end{array} \right), \ \ \
+   * H = \left( \begin{array}{cccc} I_2 & 0 & 0 & 0 \\ 0 & 0 & I_2 & 0
+   * \end{array} \right), \ \ \
+   * Q = q I_8 \ \ \f$ and \f$ \ \ R = r I_4 \f$.
+   *
+   * State \f$x\f$ must be \f$[ x, \ y, \ v_x, \ v_y, \ w, \ h, \ v_w, \
+   * v_h, ]^\top\f$ with \f$v_p = \frac{dp}{dt} \f$.
+   * \param q
+   * \param r
+   */
+  KalmanFilter(float q = 0.015f, float r = 12.0f);
+
+  /*!
+   * \copydoc KalmanFilter(float, float)
+   * \param x0 Initial state.
+   */
+  KalmanFilter(const cv::Mat &x0, float q = 0.015f, float r = 12.0f);
+
   //------------------------- Initialization ----------------------
   /*!
    * \brief Initialize with initial state.
@@ -53,15 +75,19 @@ public:
    */
   virtual void Update(const cv::Mat &z);
 
+  /*!
+   * \copydoc Filter::ToString()
+   */
+  virtual std::string ToString() const;
+
 private:
   //------------------------ Private members ----------------------
-  const cv::Mat F_;           //!< Dynamic model.
-  const cv::Mat H_;           //!< Observation model.
-  const cv::Mat Q_;           //!< Covariance of process noise.
-  const cv::Mat R_;           //!< Covariance of observation noise.
+  cv::Mat F_;                 //!< Dynamic model.
+  cv::Mat H_;                 //!< Observation model.
+  cv::Mat Q_;                 //!< Covariance of process noise.
+  cv::Mat R_;                 //!< Covariance of observation noise.
   cv::Mat P_;                 //!< State covariance estimate.
   cv::Mat predicted_P_;       //!< Predicted covariance.
-  bool predict_called_;       //!< Whether Predict() was called.
 
   DISALLOW_COPY_AND_ASSIGN(KalmanFilter);
 };

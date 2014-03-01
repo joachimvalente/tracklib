@@ -31,6 +31,11 @@ public:
    */
   virtual void Update(const cv::Mat &z) = 0;
 
+  /*!
+   * \brief Get a textual description of the filter.
+   */
+  virtual std::string ToString() const;
+
   //------------------------- Public accessors --------------------
   /*!
    * \brief Get state estimate.

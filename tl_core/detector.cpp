@@ -8,24 +8,26 @@ using namespace tl::internal;
 namespace tl {
 
 //------------------------- Constructor ---------------------------
-Detector::Detector(const cv::Mat &initial_frame, cv::Rect initial_state) :
-  width_(initial_frame.cols),
-  height_(initial_frame.rows),
-  channels_(initial_frame.channels()),
-  depth_(initial_frame.depth()),
-  initial_frame_(initial_frame.clone()),
-  initial_state_(initial_state),
-  frame_(initial_frame_.clone()),
-  state_(initial_state),
+Detector::Detector(const Mat &initial_frame, Rect initial_state) :
   confidence_(1.0f) {
   // Safety checks.
   CHECK_NOTNULL(initial_frame.data);
   CHECK(initial_state.area() > 0);
   CHECK(IsRectInsideFrame(initial_state, initial_frame));
-  CHECK_MSG(channels_ == 1 || channels_ == 3,
+  CHECK_MSG(initial_frame.channels() == 1 || initial_frame.channels() == 3,
             "images have to be color or grayscale");
-  CHECK_MSG(depth_ == CV_8U || depth_ == CV_32F,
+  CHECK_MSG(initial_frame.depth() == CV_8U || initial_frame.depth() == CV_32F,
             "supported depths are CV_8U and CV_32F");
+
+  // Initialize.
+  width_ = initial_frame.cols;
+  height_ = initial_frame.rows;
+  channels_ = initial_frame.channels();
+  depth_ = initial_frame.depth();
+  initial_frame_ = initial_frame.clone();
+  initial_state_ = initial_state;
+  frame_ = initial_frame_.clone();
+  state_ = initial_state;
 }
 
 //------------------------------ Main methods -------------------------

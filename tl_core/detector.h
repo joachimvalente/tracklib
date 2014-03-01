@@ -93,13 +93,13 @@ protected:
 
 private:
   //-------------------- Internal members ---------------------
-  const int width_;               //!< Width of frames.
-  const int height_;              //!< Height of frames.
-  const int channels_;            //!< Number of channels.
-  const int depth_;               //!< Depth.
+  int width_;                     //!< Width of frames.
+  int height_;                    //!< Height of frames.
+  int channels_;                  //!< Number of channels.
+  int depth_;                     //!< Depth.
 
-  const cv::Mat initial_frame_;   //!< First frame of the sequence.
-  const cv::Rect initial_state_;  //!< Initial state of the object to detect.
+  cv::Mat initial_frame_;         //!< First frame of the sequence.
+  cv::Rect initial_state_;        //!< Initial state of the object to detect.
 
   cv::Mat frame_;                 //!< Current frame in the sequence.
   cv::Rect state_;                //!< Current estimate of the object state.

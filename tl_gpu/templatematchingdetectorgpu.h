@@ -22,8 +22,7 @@ namespace tl {
 class TemplateMatchingDetectorGpu : public Detector {
 public:
   //----------------------- Constructor -------------------------
-  TemplateMatchingDetectorGpu(const cv::Mat &initial_frame,
-                              cv::Rect initial_state);
+  TemplateMatchingDetectorGpu(const Mat &initial_frame, Rect initial_state);
 
   //----------------------- Main methods ------------------------
   virtual void Detect();
@@ -35,9 +34,10 @@ public:
 
 private:
   //---------------------- Internal members ------------------------
-  const cv::Mat template_;            //!< Template from the initial frame.
+  cv::Mat template_;            //!< Template from the initial frame.
 
-  int opencv_method_;                 //!< OpenCV comparison method (CV_TM_*).
+  int opencv_method_;                 //!< OpenCV comparison method (CV_TM_*)
+                                      //!  [def. CV_TM_SQDIFF].
 
   DISALLOW_COPY_AND_ASSIGN(TemplateMatchingDetectorGpu);
 };

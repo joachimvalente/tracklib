@@ -11,7 +11,6 @@ MeanshiftDetector::MeanshiftDetector(const cv::Mat &initial_frame,
   variant_(TL_MEANSHIFT),
   channels_to_use_(TL_H),
   max_iter_(30) {
-  // Compute initial template histogram.
   ComputeTemplateHistogram();
 }
 

@@ -13,9 +13,14 @@
 #ifndef TRACKLIB_TRACKLIB_H
 #define TRACKLIB_TRACKLIB_H
 
+//------------------------- Core ------------------------
+#include "tl_core/detector.h"
+#include "tl_core/filter.h"
+#include "tl_core/tracker.h"
+
 //----------------------- Detectors ---------------------
-#include "tl_detectors/dummydetector.h"
 #include "tl_detectors/meanshiftdetector.h"
+#include "tl_detectors/nodetector.h"
 #include "tl_detectors/templatematchingdetector.h"
 
 //------------------------ Filters ----------------------

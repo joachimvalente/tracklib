@@ -5,8 +5,8 @@ using namespace cv;
 namespace tl {
 
 //------------------------- Constructor -------------------------
-TemplateMatchingDetector::TemplateMatchingDetector(const Mat &initial_frame,
-                                                   Rect initial_state) :
+TemplateMatchingDetector::TemplateMatchingDetector(const cv::Mat &initial_frame,
+                                                   cv::Rect initial_state) :
   Detector(initial_frame, initial_state),
   template_(initial_frame(initial_state).clone()),
   opencv_method_(CV_TM_SQDIFF) {}

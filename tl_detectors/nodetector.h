@@ -1,11 +1,11 @@
 /*!
- * \file dummydetector.h
+ * \file nodetector.h
  * \brief Dummy detector that leaves state estimate and confidence unchanged.
  * \author Joachim Valente <joachim.valente@gmail.com>
  */
 
-#ifndef TL_DUMMYDETECTOR_H
-#define TL_DUMMYDETECTOR_H
+#ifndef TL_NODETECTOR_H
+#define TL_NODETECTOR_H
 
 #include <string>
 
@@ -19,19 +19,19 @@ namespace tl {
 /*!
  * \brief Dummy detector.
  */
-class DummyDetector : public Detector {
+class NoDetector : public Detector {
 public:
   //------------------------- Constructor -----------------------
-  DummyDetector(const cv::Mat &inital_frame, cv::Rect initial_state);
+  NoDetector(const Mat &initial_frame, Rect initial_state);
 
   //------------------------ Main functions ---------------------
   virtual void Detect();
   virtual std::string ToString() const;
 
 private:
-  DISALLOW_COPY_AND_ASSIGN(DummyDetector);
+  DISALLOW_COPY_AND_ASSIGN(NoDetector);
 };
 
 }  // namespace tl
 
-#endif  // TL_DUMMYDETECTOR_H
+#endif  // TL_NODETECTOR_H
