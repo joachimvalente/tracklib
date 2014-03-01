@@ -20,6 +20,7 @@ set(CMAKE_CXX_FLAGS "-g -O -Wall -Weffc++ -pedantic -pedantic-errors -Wextra  -W
 set(SUB_DIRS tl_core
              tl_detectors
              tl_filters
+             tl_trackers
              tl_util)
 
 # Include source files.
