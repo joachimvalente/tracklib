@@ -6,3 +6,6 @@ CMakeLists.txt.user
 
 # Ignore main.cpp which is only used for local experimentations.
 main.cpp
+
+# Ignore Qt pro.user files
+*.pro.user
