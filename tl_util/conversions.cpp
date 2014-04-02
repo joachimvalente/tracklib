@@ -32,5 +32,15 @@ cv::Mat StateRectToMat(cv::Rect rect) {
   return mat;
 }
 
+cv::Mat StateRectToStandardMat(cv::Rect rect) {
+  Mat mat = Mat::zeros(8, 1, CV_32F);
+  Mat_<float> mat_d(mat);
+  mat_d.at<float>(0, 0) = rect.x;
+  mat_d.at<float>(0, 1) = rect.y;
+  mat_d.at<float>(0, 4) = rect.width;
+  mat_d.at<float>(0, 5) = rect.height;
+  return mat;
+}
+
 }  // namespace internal
 }  // namespace tl

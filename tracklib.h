@@ -14,6 +14,7 @@
 #define TRACKLIB_TRACKLIB_H
 
 //------------------------- Core ------------------------
+#include "tl_core/backgroundsubtractor.h"
 #include "tl_core/detector.h"
 #include "tl_core/filter.h"
 #include "tl_core/tracker.h"
@@ -25,6 +26,9 @@
 
 //------------------------ Filters ----------------------
 #include "tl_filters/kalmanfilter.h"
+
+//----------------- Background Subtractors --------------
+#include "tl_backgroundsubtractors/onlinebackgroundsubtractor.h"
 
 //-------------------------- Gpu ------------------------
 #ifdef TL_CUDA

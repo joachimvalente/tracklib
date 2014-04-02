@@ -9,7 +9,8 @@ namespace tl {
 //--------------------------- Constructor --------------------------
 Tracker::Tracker() :
   detector_(nullptr),
-  filter_(nullptr) {}
+  filter_(nullptr),
+  bgs_(nullptr) {}
 
 //-------------------------- Set components ------------------------
 void Tracker::set_detector(Detector *detector) {
@@ -25,21 +26,38 @@ void Tracker::set_filter(Filter *filter) {
   filter_ = filter;
 }
 
+void Tracker::set_bgs(BackgroundSubtractor *bgs) {
+  CHECK_NOTNULL(bgs);
+  CHECK_MSG(!bgs_, "background subtractor has already been set");
+  bgs_ = bgs;
+}
+
 //--------------------------- Display info --------------------------
 std::string Tracker::ToString() const {
   CHECK_NOTNULL(detector_);
+  string description = detector_->ToString();
   if (filter_) {
-    return detector_->ToString() + " / " + filter_->ToString();
-  } else {
-    return detector_->ToString();
+    description += " / " + filter_->ToString();
   }
+  if (bgs_) {
+    description += " + bgs";
+  }
+  return description;
 }
 
 //-------------------------- Main function --------------------------
 void Tracker::Track(const Mat &next_frame) {
   CHECK_NOTNULL(detector_);
 
-  cv::Mat frame = Preprocess(next_frame);
+  cv::Mat frame = next_frame.clone();
+  frame = Preprocess(frame);
+
+  if (bgs_ != nullptr) {
+    // Segment foreground.
+    bgs_->NextFrame(frame);
+    frame = bgs_->GetForeground();
+    imshow("window", frame);
+  }
 
   if (filter_ != nullptr) {
     // Predict new position and feed it to the detector.

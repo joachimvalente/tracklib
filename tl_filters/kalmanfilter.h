@@ -37,6 +37,15 @@ public:
                const cv::Mat &x0);
 
   /*!
+   * \copydoc KalmanFilter(const cv::Mat&, const cv::Mat&, const cv::Mat&,
+   * const cv::Mat&);
+   * \param x0 Initial state.
+   */
+  KalmanFilter(const cv::Mat &F, const cv::Mat &H, const cv::Mat &Q,
+               const cv::Mat &R,
+               cv::Rect x0);
+
+  /*!
    * \brief Construct a Kalman filter for standard tracking model.
    *
    * \f$ F = \left( \begin{array}{cccc} I_2 & I_2 & 0 & 0 \\ 0 & I_2 & 0 & 0 \\
@@ -57,6 +66,12 @@ public:
    * \param x0 Initial state.
    */
   KalmanFilter(const cv::Mat &x0, float q = 0.015f, float r = 12.0f);
+
+  /*!
+   * \copydoc KalmanFilter(float, float)
+   * \param state Initial state.
+   */
+  KalmanFilter(cv::Rect x0, float q = 0.015f, float r = 12.0f);
 
   //------------------------- Initialization ----------------------
   /*!

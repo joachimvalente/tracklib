@@ -1,6 +1,8 @@
 #include "tl_filters/kalmanfilter.h"
+#include "tl_util/conversions.h"
 
 using namespace cv;
+using namespace tl::internal;
 
 namespace tl {
 
@@ -31,6 +33,12 @@ KalmanFilter::KalmanFilter(const cv::Mat &F, const cv::Mat &H, const cv::Mat &Q,
                            const cv::Mat &R, const cv::Mat &x0) :
   KalmanFilter(F, H, Q, R) {
   Init(x0);
+}
+
+KalmanFilter::KalmanFilter(const cv::Mat &F, const cv::Mat &H, const cv::Mat &Q,
+                           const cv::Mat &R, cv::Rect x0) :
+  KalmanFilter(F, H, Q, R) {
+  Init(StateRectToStandardMat(x0));
 }
 
 KalmanFilter::KalmanFilter(float q, float r) {
@@ -70,6 +78,11 @@ KalmanFilter::KalmanFilter(float q, float r) {
 KalmanFilter::KalmanFilter(const cv::Mat &x0, float q, float r) :
   KalmanFilter(q, r) {
   Init(x0);
+}
+
+KalmanFilter::KalmanFilter(cv::Rect x0, float q, float r) :
+  KalmanFilter(q, r) {
+  Init(StateRectToStandardMat(x0));
 }
 
 //---------------------------- Initialization ----------------------------

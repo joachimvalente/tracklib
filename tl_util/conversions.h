@@ -15,6 +15,7 @@ namespace internal {
 //------------ Conversions between state-rect and state-matrix ---------------
 cv::Rect StateMatToRect(const cv::Mat &mat);
 cv::Mat StateRectToMat(cv::Rect rect);
+cv::Mat StateRectToStandardMat(cv::Rect rect);
 
 }  // namespace internal
 }  // namespace tl

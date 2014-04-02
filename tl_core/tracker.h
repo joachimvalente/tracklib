@@ -12,6 +12,7 @@
 #include <opencv2/core/core.hpp>
 
 #include "common.h"
+#include "tl_core/backgroundsubtractor.h"
 #include "tl_core/detector.h"
 #include "tl_core/filter.h"
 
@@ -40,6 +41,7 @@ public:
   //--------------------------- Set components -----------------------
   void set_detector(Detector *detector);
   void set_filter(Filter *filter);
+  void set_bgs(BackgroundSubtractor *bgs);
 
   //--------------------------- Display info -------------------------
   virtual std::string ToString() const;
@@ -66,6 +68,7 @@ private:
   //--------------------------- Private members ------------------------
   Detector *detector_;                //!< Detector. Not owned.
   Filter *filter_;                    //!< Filter. Not owned.
+  BackgroundSubtractor *bgs_;         //!< Background subtractor. Not owned.
 
   cv::Rect state_;                    //!< Current state estimate.
 
