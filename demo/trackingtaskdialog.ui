@@ -20,7 +20,7 @@
    <item>
     <widget class="QTabWidget" name="tabWidget">
      <property name="currentIndex">
-      <number>1</number>
+      <number>0</number>
      </property>
      <widget class="QWidget" name="tab">
       <attribute name="title">
@@ -116,6 +116,47 @@
                <property name="fieldGrowthPolicy">
                 <enum>QFormLayout::FieldsStayAtSizeHint</enum>
                </property>
+               <item row="0" column="0">
+                <widget class="QLabel" name="label_2">
+                 <property name="text">
+                  <string>Method</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="0" column="1">
+                <widget class="QComboBox" name="comboBoxTmMethod">
+                 <item>
+                  <property name="text">
+                   <string>CV_TM_SQDIFF</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>CV_TM_SQDIFF_NORMED</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>CV_TM_CCORR</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>CV_TM_CCORR_NORMED</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>CV_TM_CCOEFF</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>CV_TM_CCOEFF_NORMED</string>
+                  </property>
+                 </item>
+                </widget>
+               </item>
               </layout>
              </widget>
             </widget>
@@ -153,7 +194,7 @@
                 </widget>
                </item>
                <item row="0" column="1">
-                <widget class="QComboBox" name="meanshiftVariant">
+                <widget class="QComboBox" name="comboBoxMeanshiftVariant">
                  <item>
                   <property name="text">
                    <string>Meanshift</string>
@@ -166,6 +207,57 @@
                  </item>
                 </widget>
                </item>
+               <item row="1" column="0">
+                <widget class="QLabel" name="label_3">
+                 <property name="text">
+                  <string>Channels</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="1" column="1">
+                <widget class="QComboBox" name="comboBoxMeanshiftChannels">
+                 <item>
+                  <property name="text">
+                   <string>Hue</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>Saturation</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>Hue + Saturation</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>Grayscale</string>
+                  </property>
+                 </item>
+                </widget>
+               </item>
+               <item row="2" column="0">
+                <widget class="QLabel" name="label_4">
+                 <property name="text">
+                  <string>Max iterations</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="2" column="1">
+                <widget class="QSpinBox" name="spinBoxMeanshiftIter">
+                 <property name="minimum">
+                  <number>1</number>
+                 </property>
+                 <property name="maximum">
+                  <number>9999</number>
+                 </property>
+                 <property name="value">
+                  <number>30</number>
+                 </property>
+                </widget>
+               </item>
               </layout>
              </widget>
             </widget>
@@ -173,6 +265,127 @@
           </layout>
          </widget>
         </widget>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="tab_3">
+      <attribute name="title">
+       <string>Filter</string>
+      </attribute>
+      <layout class="QVBoxLayout" name="verticalLayout_4">
+       <item>
+        <widget class="QTabWidget" name="tabWidgetFilter">
+         <property name="currentIndex">
+          <number>0</number>
+         </property>
+         <widget class="QWidget" name="tab_6">
+          <attribute name="title">
+           <string>No filter</string>
+          </attribute>
+         </widget>
+         <widget class="QWidget" name="tab_7">
+          <attribute name="title">
+           <string>Kalman Filter</string>
+          </attribute>
+          <layout class="QFormLayout" name="formLayout_3">
+           <item row="0" column="0">
+            <widget class="QLabel" name="label_5">
+             <property name="text">
+              <string>q</string>
+             </property>
+            </widget>
+           </item>
+           <item row="0" column="1">
+            <widget class="QDoubleSpinBox" name="doubleSpinBoxKalmanQ">
+             <property name="decimals">
+              <number>3</number>
+             </property>
+             <property name="value">
+              <double>0.015000000000000</double>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="0">
+            <widget class="QLabel" name="label_6">
+             <property name="text">
+              <string>r</string>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="1">
+            <widget class="QDoubleSpinBox" name="doubleSpinBoxKalmanR">
+             <property name="decimals">
+              <number>3</number>
+             </property>
+             <property name="value">
+              <double>12.000000000000000</double>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </widget>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="tab_8">
+      <attribute name="title">
+       <string>Options</string>
+      </attribute>
+      <layout class="QVBoxLayout" name="verticalLayout_5">
+       <item>
+        <widget class="QGroupBox" name="groupBoxBgs">
+         <property name="title">
+          <string>Background Subtraction</string>
+         </property>
+         <property name="checkable">
+          <bool>true</bool>
+         </property>
+         <property name="checked">
+          <bool>false</bool>
+         </property>
+         <layout class="QFormLayout" name="formLayout_4">
+          <item row="0" column="0">
+           <widget class="QLabel" name="label_8">
+            <property name="text">
+             <string>Method</string>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="1">
+           <widget class="QComboBox" name="comboBoxBgsMethod">
+            <item>
+             <property name="text">
+              <string>TL_GMG</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>TL_MOG</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>TL_MOG2</string>
+             </property>
+            </item>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item>
+        <spacer name="verticalSpacer">
+         <property name="orientation">
+          <enum>Qt::Vertical</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>20</width>
+           <height>40</height>
+          </size>
+         </property>
+        </spacer>
        </item>
       </layout>
      </widget>

@@ -56,7 +56,6 @@ void Tracker::Track(const Mat &next_frame) {
     // Segment foreground.
     bgs_->NextFrame(frame);
     frame = bgs_->GetForeground();
-    imshow("window", frame);
   }
 
   if (filter_ != nullptr) {

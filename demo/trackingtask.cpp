@@ -16,6 +16,7 @@ using namespace tl;
 namespace Multitrack {
 
 TrackingTask::TrackingTask() :
+  filter_(kNoFilter), bgs_(kNoBgs),
   completed_(false), active_(false) {
   set_random_color();
 }
@@ -23,6 +24,10 @@ TrackingTask::TrackingTask() :
 TrackingTask::TrackingTask(const TrackingTask *task) {
   algo_ = task->algo_;
   params_ = task->params_;
+  filter_ = task->filter_;
+  filter_params_ = task->filter_params_;
+  bgs_ = task->bgs_;
+  bgs_params_ = task->bgs_params_;
   object_ = task->object_;
   first_frame_ = task->first_frame_;
   set_random_color();
@@ -35,8 +40,27 @@ void TrackingTask::set_tracker(Algorithm algo,
   params_ = params;
 }
 
+void TrackingTask::set_filter(Filter filter,
+                              const QVector<Param> &filter_params) {
+  filter_ = filter;
+  filter_params_ = filter_params;
+}
+
+void TrackingTask::set_bgs(Bgs bgs, const QVector<Param> &bgs_params) {
+  bgs_ = bgs;
+  bgs_params_ = bgs_params;
+}
+
 TrackingTask::Algorithm TrackingTask::algorithm() const {
   return algo_;
+}
+
+TrackingTask::Filter TrackingTask::filter() const {
+  return filter_;
+}
+
+TrackingTask::Bgs TrackingTask::bgs() const {
+  return bgs_;
 }
 
 QString TrackingTask::algorithm_str() const {
@@ -47,12 +71,28 @@ QString TrackingTask::algorithm_str() const {
   else if (algo_ == kMeanshift)
     alg = "Meanshift";
 
+  if (filter_ == kKalmanFilter)
+    alg += "/Kalman";
+
+  if (bgs_ != kNoBgs)
+    alg += " + BGS";
+
   return alg;
 }
 
 const Param &TrackingTask::param(int i) const {
   assert(0 <= i && i < params_.count());
   return params_.at(i);
+}
+
+const Param &TrackingTask::filter_param(int i) const {
+  assert(0 <= i && i < filter_params_.count());
+  return filter_params_.at(i);
+}
+
+const Param &TrackingTask::bgs_param(int i) const {
+  assert(0 <= i && i < bgs_params_.count());
+  return bgs_params_.at(i);
 }
 
 void TrackingTask::set_object(const cv::Rect &object) {
@@ -131,18 +171,25 @@ void TrackingTask::ClearResults() {
 }
 
 QDataStream &operator<<(QDataStream &out, const TrackingTask *t) {
-  out << quint32(static_cast<int>(t->algo_)) << t->params_ << t->object_ <<
-         t->first_frame_ << t->completed_ << t->results_ << t->active_ <<
-         t->color_;
+  out << quint32(static_cast<int>(t->algo_)) << t->params_ <<
+         quint32(static_cast<int>(t->filter_)) << t->filter_params_ <<
+         quint32(static_cast<int>(t->bgs_)) << t->bgs_params_ <<
+         t->object_ << t->first_frame_ << t->completed_ << t->results_ <<
+         t->active_ << t->color_;
   return out;
 }
 
 QDataStream &operator>>(QDataStream &in, TrackingTask *t) {
   assert(t != nullptr);
   int c = 0;
-  in >> c >> t->params_ >> t->object_ >> t->first_frame_ >> t->completed_ >>
-        t->results_ >> t->active_ >> t->color_;
+  int d = 0;
+  int e = 0;
+  in >> c >> t->params_ >> d >> t->filter_params_ >> e >> t->bgs_params_ >>
+        t->object_ >> t->first_frame_ >> t->completed_ >> t->results_ >>
+        t->active_ >> t->color_;
   t->algo_ = static_cast<TrackingTask::Algorithm>(c);
+  t->filter_ = static_cast<TrackingTask::Filter>(d);
+  t->bgs_ = static_cast<TrackingTask::Bgs>(e);
   return in;
 }
 
@@ -200,17 +247,71 @@ void TrackingTask::Run() {
   Detector *detector = nullptr;
   switch (algo_) {
     case TrackingTask::kTemplateMatching:
-      detector = new TemplateMatchingDetector(frame, QRect2CvRect(object_));
+    {
+      const int methods[] = {CV_TM_SQDIFF, CV_TM_SQDIFF_NORMED,
+                             CV_TM_CCORR, CV_TM_CCORR_NORMED,
+                             CV_TM_CCOEFF, CV_TM_CCOEFF_NORMED};
+      TemplateMatchingDetector *m_detector = new TemplateMatchingDetector(
+                                              frame, QRect2CvRect(object_));
+      m_detector->set_opencv_method(methods[params_.at(0).GetI()]);
+      detector = m_detector;
       break;
+    }
     case TrackingTask::kMeanshift:
-      detector = new MeanshiftDetector(frame, QRect2CvRect(object_));
+    {
+      const int channels[] = {TL_H, TL_S, TL_HS, TL_GRAY};
+      MeanshiftDetector *m_detector = new MeanshiftDetector(
+                                       frame, QRect2CvRect(object_));
+      m_detector->set_variant(
+            static_cast<MeanshiftVariant>(params_.at(0).GetI()));
+      m_detector->set_channels_to_use(
+            static_cast<Channels>(channels[params_.at(1).GetI()]));
+      m_detector->set_max_iter(params_.at(2).GetI());
+      detector = m_detector;
       break;
+    }
     default:
+    {
       detector = new NoDetector(frame, QRect2CvRect(object_));
       break;
+    }
   }
   Tracker tracker;
   tracker.set_detector(detector);
+
+  switch (filter_) {
+    case kKalmanFilter:
+    {
+      tl::KalmanFilter *filter = new tl::KalmanFilter(
+                                   QRect2CvRect(object_),
+                                   filter_params_.at(0).GetF(),
+                                   filter_params_.at(1).GetF());
+      tracker.set_filter(filter);
+      break;
+    }
+    case kNoFilter:
+    default:
+    {
+      // Do nothing.
+    }
+  }
+
+  switch (bgs_) {
+    case kOnlineBgs:
+    {
+      OnlineBackgroundSubtractor *bgs =
+          new OnlineBackgroundSubtractor(
+            frame,
+            static_cast<BackgroundSubtractionMethod>(bgs_params_.at(0).GetI()));
+      tracker.set_bgs(bgs);
+      break;
+    }
+    case kNoBgs:
+    default:
+    {
+      // Do nothing.
+    }
+  }
 
   results_.clear();
   results_.push_back(object_);

@@ -36,6 +36,16 @@ public:
     kMeanshift
   };
 
+  enum Filter {
+    kNoFilter = 0,
+    kKalmanFilter
+  };
+
+  enum Bgs {
+    kNoBgs = 0,
+    kOnlineBgs
+  };
+
   TrackingTask();
   TrackingTask(const TrackingTask *task);
 
@@ -43,7 +53,15 @@ public:
   QString algorithm_str() const;
   const Param &param(int i) const;
 
+  Filter filter() const;
+  const Param &filter_param(int i) const;
+
+  Bgs bgs() const;
+  const Param &bgs_param(int i) const;
+
   void set_tracker(Algorithm algo, const QVector<Param> &params);
+  void set_filter(Filter filter, const QVector<Param> &filter_params);
+  void set_bgs(Bgs bgs, const QVector<Param> &bgs_params);
   void set_object(const cv::Rect &object);
   void set_first_frame(int first_frame);
 
@@ -83,6 +101,14 @@ private:
   // Algorithm.
   Algorithm algo_;
   QVector<Param> params_;
+
+  // Filter.
+  Filter filter_;
+  QVector<Param> filter_params_;
+
+  // Bgs.
+  Bgs bgs_;
+  QVector<Param> bgs_params_;
 
   // Tracking problem.
   QRect object_;

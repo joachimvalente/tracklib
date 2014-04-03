@@ -61,8 +61,25 @@ TrackingTaskDialog::TrackingTaskDialog(const QPixmap *pixmap,
     ui->tabWidgetAlgo->setCurrentIndex(static_cast<int>(task_->algorithm()));
     if (task_->algorithm() == TrackingTask::kTemplateMatching) {
       // Template matching.
+      ui->comboBoxTmMethod->setCurrentIndex(task_->param(0).GetI());
     } else if (task_->algorithm() == TrackingTask::kMeanshift) {
       // Meanshift.
+      ui->comboBoxMeanshiftVariant->setCurrentIndex(task_->param(0).GetI());
+      ui->comboBoxMeanshiftChannels->setCurrentIndex(task_->param(1).GetI());
+      ui->spinBoxMeanshiftIter->setValue(task_->param(2).GetI());
+    }
+
+    // Filter.
+    ui->tabWidgetFilter->setCurrentIndex(static_cast<int>(task_->filter()));
+    if (task_->filter() == TrackingTask::kKalmanFilter) {
+      ui->doubleSpinBoxKalmanQ->setValue(task_->filter_param(0).GetF());
+      ui->doubleSpinBoxKalmanR->setValue(task_->filter_param(1).GetF());
+    }
+
+    // Bgs.
+    if (task_->bgs() != TrackingTask::kNoBgs) {
+      ui->groupBoxBgs->setChecked(true);
+      ui->comboBoxBgsMethod->setCurrentIndex(task_->bgs_param(0).GetI());
     }
   } else {
     task_->set_first_frame(frame_number);
@@ -285,13 +302,42 @@ void TrackingTaskDialog::accept() {
   // Template matching.
   if (algo == 0) {
     QVector<Param> params;
+    params.push_back(Param(ui->comboBoxTmMethod->currentIndex()));
     task_->set_tracker(TrackingTask::kTemplateMatching, params);
   }
 
   // Meanshift.
   else if (algo == 1) {
     QVector<Param> params;
+    params.push_back(Param(ui->comboBoxMeanshiftVariant->currentIndex()));
+    params.push_back(Param(ui->comboBoxMeanshiftChannels->currentIndex()));
+    params.push_back(Param(ui->spinBoxMeanshiftIter->value()));
     task_->set_tracker(TrackingTask::kMeanshift, params);
+  }
+
+  // Filter.
+  int filter = ui->tabWidgetFilter->currentIndex();
+
+  if (filter == 0) {
+    QVector<Param> filter_params;
+    task_->set_filter(TrackingTask::kNoFilter, filter_params);
+  } else if (filter == 1) {
+    QVector<Param> filter_params;
+    filter_params.push_back(Param(ui->doubleSpinBoxKalmanQ->value()));
+    filter_params.push_back(Param(ui->doubleSpinBoxKalmanR->value()));
+    task_->set_filter(TrackingTask::kKalmanFilter, filter_params);
+  }
+
+  // Bgs.
+  bool bgs = (ui->groupBoxBgs->isChecked());
+
+  if (bgs) {
+    QVector<Param> bgs_params;
+    bgs_params.push_back(Param(ui->comboBoxBgsMethod->currentIndex()));
+    task_->set_bgs(TrackingTask::kOnlineBgs, bgs_params);
+  } else {
+    QVector<Param> bgs_params;
+    task_->set_bgs(TrackingTask::kNoBgs, bgs_params);
   }
 
   task_->ClearResults();
