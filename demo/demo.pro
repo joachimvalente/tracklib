@@ -80,8 +80,7 @@ FORMS    += mainwindow.ui \
     trackingtaskdialog.ui \
     welcomewidget.ui
 
-INCLUDEPATH += .. \
-            /opt/local/include
+INCLUDEPATH += ..
 
 LIBS += -L/opt/local/lib/ \
     -lopencv_core \
