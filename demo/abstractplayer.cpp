@@ -7,18 +7,12 @@
 
 #include <opencv2/imgproc/imgproc.hpp>
 
-//#include "tracklib/extern/SLICSuperpixels/SLIC.h"
-
 namespace Multitrack {
 
 AbstractPlayer::AbstractPlayer(QObject *parent) :
   QObject(parent),
   nb_frames_(1), current_frame_(1), fps_(25.0f), speed_(1.0f),
-  playing_(false), was_playing_(false) {
-
-  show_foreground_ = false;
-//  bgs_ = new DPAdaptiveMedianBGS;
-}
+  playing_(false), was_playing_(false) {}
 
 float AbstractPlayer::fps() const {
   return fps_;
@@ -27,65 +21,7 @@ float AbstractPlayer::fps() const {
 void AbstractPlayer::ProcessFrame(const cv::Mat &frame, const QTime &time) {
   QImage *img;
   if (frame.channels() == 3) {
-//    unsigned int *image = new unsigned int[frame.rows * frame.cols * 3];
-//    for (int i = 0; i < frame.rows; ++i) {
-//      for (int j = 0; j < frame.cols; ++j) {
-//        for (int k = 0; k < 3; ++k) {
-//          image[k * (frame.rows * frame.cols) + i + frame.rows * j] =
-//              frame.data[k + i * 3 + j * 3 * frame.rows];
-//        }
-//      }
-//    }
-
-//    SLIC slic;
-//    int *klabels = new int[frame.rows * frame.cols];
-//    int numlabels = 0;
-//    int k = 2000;  // Number of superpixels.
-//    double m = 20;  // Compression factor.
-//    slic.PerformSLICO_ForGivenK(image,
-//                                frame.cols, frame.rows, klabels,
-//                                numlabels, k, m);
-
-//    double *superpixel_values = new double[3 * numlabels];
-//    for (int i = 0; i < 3 * numlabels; ++i) superpixel_values[i] = 0;
-
-//    int *nb_pixels = new int[numlabels];
-//    for (int i = 0; i < numlabels; ++i) nb_pixels[i] = 0;
-
-//    for (int i = 0; i < frame.rows; ++i) {
-//      for (int j = 0; j < frame.cols; ++j) {
-//        for (int k = 0; k < 3; ++k) {
-//          superpixel_values[k * numlabels + klabels[j + frame.cols * i]] +=
-//              frame.at<cv::Vec3b>(i, j)[k];
-//        }
-//        ++nb_pixels[klabels[j + frame.cols * i]];
-//      }
-//    }
-//    for (int i = 0; i < numlabels; ++i) {
-//      for (int k = 0; k < 3; ++k) {
-//        superpixel_values[k * numlabels + i] /= nb_pixels[i];
-//      }
-//    }
-
-//    cv::Mat_<cv::Vec3b> frame2 = frame;
-//    for (int i = 0; i < frame.rows; ++i) {
-//      for (int j = 0; j < frame.cols; ++j) {
-//        for (int k = 0; k < 3; ++k) {
-//          frame2(i, j)[k] = superpixel_values[k * numlabels + klabels[j + frame.cols * i]];
-//        }
-//      }
-//    }
-
-    if (show_foreground_) {
-//      cv::Mat bg, fg, masked;
-//      bgs_->process(frame, fg /* foreground */, bg /* background */);
-//      cv::erode(fg, fg, Mat(), Point(-1, -1), 1);
-//      cv::dilate(fg, fg, Mat(), Point(-1, -1), 25);
-//      frame.copyTo(masked, fg);
-//      img = new QImage(MatColor2QImage(masked));
-    } else {
-      img = new QImage(MatColor2QImage(frame));
-    }
+    img = new QImage(MatColor2QImage(frame));
   } else {
     img = new QImage(MatGray2QImage(frame));
   }

@@ -46,7 +46,7 @@ private slots:
   // Player.
   void on_sliderSpeed_valueChanged(int value);
   void on_toolButtonInfo_clicked();
-    // time is the time of the request.
+  // time is the time of the request.
   void UpdateFrame(QImage *img, int frame, const QTime &time);
   void OnPlayerStartedPlaying();
   void OnPlayerPaused();

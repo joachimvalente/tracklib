@@ -32,17 +32,8 @@ class TrackingTask : public QObject {
 
 public:
   enum Algorithm {
-    kDummyTracker = 0,
-    kTemplateMatching,
-    kMeanshift,
-    kOnlineBoosting,
-    kMiltrack,
-    kKalman
-  };
-
-  enum BGS {
-    kBgsNone = 0,
-    kBgs
+    kTemplateMatching = 0,
+    kMeanshift
   };
 
   TrackingTask();
@@ -51,12 +42,8 @@ public:
   Algorithm algorithm() const;
   QString algorithm_str() const;
   const Param &param(int i) const;
-  BGS bgs() const;
-  int bgs_erode() const;
-  int bgs_dilate() const;
 
-  void set_tracker(Algorithm algo, const QVector<Param> &params, BGS bgs,
-                   int bgs_erode, int bgs_dilate);
+  void set_tracker(Algorithm algo, const QVector<Param> &params);
   void set_object(const cv::Rect &object);
   void set_first_frame(int first_frame);
 
@@ -96,11 +83,6 @@ private:
   // Algorithm.
   Algorithm algo_;
   QVector<Param> params_;
-
-  // Background subtraction.
-  BGS bgs_;
-  int bgs_erode_;
-  int bgs_dilate_;
 
   // Tracking problem.
   QRect object_;

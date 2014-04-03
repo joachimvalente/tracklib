@@ -55,9 +55,6 @@ protected:
   float speed_;
   bool playing_;
   bool was_playing_;
-
-  bool show_foreground_;
-//  IBGS *bgs_;
 };
 
 }  // namespace Multitrack

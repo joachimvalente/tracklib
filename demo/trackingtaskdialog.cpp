@@ -45,10 +45,6 @@ TrackingTaskDialog::TrackingTaskDialog(const QPixmap *pixmap,
                                        Qt::FastTransformation));
   ui->labelOpencv->setPixmap(*original_pixmap_);
 
-  connect(ui->comboBoxFamily, SIGNAL(currentIndexChanged(int)),
-          ui->tabWidgetAlgo, SLOT(setCurrentIndex(int)));
-  connect(ui->tabWidgetAlgo, SIGNAL(currentChanged(int)),
-          ui->comboBoxFamily, SLOT(setCurrentIndex(int)));
   ui->labelOpencv->installEventFilter(this);
 
   // Update UI values if editing and not creating.
@@ -65,51 +61,12 @@ TrackingTaskDialog::TrackingTaskDialog(const QPixmap *pixmap,
     ui->tabWidgetAlgo->setCurrentIndex(static_cast<int>(task_->algorithm()));
     if (task_->algorithm() == TrackingTask::kTemplateMatching) {
       // Template matching.
-      ui->templateWindowSize->setValue(task_->param(0).GetI());
-      ui->templateColorMode->setCurrentIndex(task_->param(1).GetI());
-      ui->templateSimilarityMeasure->setCurrentIndex(task_->param(2).GetI());
     } else if (task_->algorithm() == TrackingTask::kMeanshift) {
       // Meanshift.
-      ui->meanshiftVariant->setCurrentIndex(task_->param(2).GetB() ? 1 : 0);
-      ui->meanshiftChannels->setCurrentIndex(task_->param(0).GetI() - 1);
-      ui->meanshiftMaxIterations->setValue(task_->param(1).GetI());
-    } else if (task_->algorithm() == TrackingTask::kOnlineBoosting) {
-      // Online boosting.
-      ui->onlineClassifiers->setValue(task_->param(0).GetI());
-      ui->onlineOverlap->setValue(task_->param(1).GetF());
-      ui->onlineSearchFactor->setValue(task_->param(2).GetF());
-    } else if (task_->algorithm() == TrackingTask::kMiltrack) {
-      // Miltrack.
-      ui->miltrackClassifiers->setValue(task_->param(0).GetI());
-      ui->miltrackOverlap->setValue(task_->param(1).GetF());
-      ui->miltrackSearchFactor->setValue(task_->param(2).GetF());
-      ui->miltrackPositiveRadius->setValue(task_->param(3).GetF());
-      ui->miltrackNumberNegatives->setValue(task_->param(4).GetI());
-      ui->miltrackNumberFeatures->setValue(task_->param(5).GetI());
-    } else if (task_->algorithm() == TrackingTask::kKalman) {
-      // Kalman.
-      ui->kalmanAlgorithm->setCurrentText(task_->param(0).GetS());
     }
-
-    // Options.
-    ui->groupBoxBackground->setChecked(task_->bgs() != TrackingTask::kBgsNone);
   } else {
     task_->set_first_frame(frame_number);
   }
-
-  // Options.
-  ui->comboBoxBackground->insertSeparator(32);
-  ui->comboBoxBackground->insertSeparator(30);
-  ui->comboBoxBackground->insertSeparator(29);
-  ui->comboBoxBackground->insertSeparator(25);
-  ui->comboBoxBackground->insertSeparator(23);
-  ui->comboBoxBackground->insertSeparator(19);
-  ui->comboBoxBackground->insertSeparator(14);
-  ui->comboBoxBackground->insertSeparator(12);
-  ui->comboBoxBackground->insertSeparator(9);
-  ui->comboBoxBackground->insertSeparator(1);
-  ui->spinBoxErode->setValue(task->bgs_erode());
-  ui->spinBoxDilate->setValue(task->bgs_dilate());
 }
 
 TrackingTaskDialog::~TrackingTaskDialog() {
@@ -308,11 +265,6 @@ void TrackingTaskDialog::accept() {
     return;
   }
 
-  TrackingTask::BGS bgs = TrackingTask::kBgsNone;
-  if (ui->groupBoxBackground->isChecked()) {
-    bgs = TrackingTask::kBgs;
-  }
-
   if (QRect(start_point_, end_point_).isEmpty()) {
     ui->tabWidget->setCurrentIndex(0);
     QMessageBox::critical(this, "Error", "Object selected is empty.");
@@ -331,60 +283,15 @@ void TrackingTaskDialog::accept() {
   int algo = ui->tabWidgetAlgo->currentIndex();
 
   // Template matching.
-  if (algo == 1) {
+  if (algo == 0) {
     QVector<Param> params;
-    params.push_back(Param(ui->templateWindowSize->value()));
-    params.push_back(Param(ui->templateColorMode->currentIndex()));
-    params.push_back(Param(ui->templateSimilarityMeasure->currentIndex()));
-    task_->set_tracker(TrackingTask::kTemplateMatching, params, bgs,
-                       ui->spinBoxErode->value(), ui->spinBoxDilate->value());
+    task_->set_tracker(TrackingTask::kTemplateMatching, params);
   }
 
   // Meanshift.
-  else if (algo == 2) {
+  else if (algo == 1) {
     QVector<Param> params;
-    params.push_back(Param(ui->meanshiftChannels->currentIndex() + 1));
-    params.push_back(Param(ui->meanshiftMaxIterations->value()));
-    params.push_back(Param(ui->meanshiftVariant->currentIndex() == 1));
-    task_->set_tracker(TrackingTask::kMeanshift, params, bgs,
-                       ui->spinBoxErode->value(), ui->spinBoxDilate->value());
-  }
-
-  // Online boosting.
-  else if (algo == 3) {
-    QVector<Param> params;
-    params.push_back(Param(ui->onlineClassifiers->value()));
-    params.push_back(Param(ui->onlineOverlap->value()));
-    params.push_back(Param(ui->onlineSearchFactor->value()));
-    task_->set_tracker(TrackingTask::kOnlineBoosting, params, bgs,
-                       ui->spinBoxErode->value(), ui->spinBoxDilate->value());
-  }
-
-  // Miltrack.
-  else if (algo == 4) {
-    QVector<Param> params;
-    params.push_back(Param(ui->miltrackClassifiers->value()));
-    params.push_back(Param(ui->miltrackOverlap->value()));
-    params.push_back(Param(ui->miltrackSearchFactor->value()));
-    params.push_back(Param(ui->miltrackPositiveRadius->value()));
-    params.push_back(Param(ui->miltrackNumberNegatives->value()));
-    params.push_back(Param(ui->miltrackNumberFeatures->value()));
-    task_->set_tracker(TrackingTask::kMiltrack, params, bgs,
-                       ui->spinBoxErode->value(), ui->spinBoxDilate->value());
-  }
-
-  // Kalman.
-  else if (algo == 5) {
-    QVector<Param> params;
-    params.push_back(Param(ui->kalmanAlgorithm->currentText()));
-    task_->set_tracker(TrackingTask::kKalman, params, bgs,
-                       ui->spinBoxErode->value(), ui->spinBoxDilate->value());
-  }
-
-  // Dummy tracker.
-  else {
-    task_->set_tracker(TrackingTask::kDummyTracker, QVector<Param>(), bgs,
-                       ui->spinBoxErode->value(), ui->spinBoxDilate->value());
+    task_->set_tracker(TrackingTask::kMeanshift, params);
   }
 
   task_->ClearResults();

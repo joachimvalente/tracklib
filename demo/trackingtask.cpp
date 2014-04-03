@@ -16,7 +16,6 @@ using namespace tl;
 namespace Multitrack {
 
 TrackingTask::TrackingTask() :
-  bgs_erode_(2), bgs_dilate_(2),
   completed_(false), active_(false) {
   set_random_color();
 }
@@ -24,9 +23,6 @@ TrackingTask::TrackingTask() :
 TrackingTask::TrackingTask(const TrackingTask *task) {
   algo_ = task->algo_;
   params_ = task->params_;
-  bgs_ = task->bgs_;
-  bgs_erode_ = task->bgs_erode_;
-  bgs_dilate_ = task->bgs_dilate_;
   object_ = task->object_;
   first_frame_ = task->first_frame_;
   set_random_color();
@@ -34,13 +30,9 @@ TrackingTask::TrackingTask(const TrackingTask *task) {
 }
 
 void TrackingTask::set_tracker(Algorithm algo,
-                               const QVector<Param> &params,
-                               BGS bgs, int bgs_erode, int bgs_dilate) {
+                               const QVector<Param> &params) {
   algo_ = algo;
   params_ = params;
-  bgs_ = bgs;
-  bgs_erode_ = bgs_erode;
-  bgs_dilate_ = bgs_dilate;
 }
 
 TrackingTask::Algorithm TrackingTask::algorithm() const {
@@ -50,23 +42,10 @@ TrackingTask::Algorithm TrackingTask::algorithm() const {
 QString TrackingTask::algorithm_str() const {
   QString alg;
 
-  if (algo_ == kDummyTracker)
-    alg = "Dummy tracker";
-  else if (algo_ == kTemplateMatching)
+  if (algo_ == kTemplateMatching)
     alg = "Template matching";
-  else if (algo_ == kMeanshift && !params_[2].GetB())
+  else if (algo_ == kMeanshift)
     alg = "Meanshift";
-  else if (algo_ == kMeanshift && params_[2].GetB())
-    alg = "Camshift";
-  else if (algo_ == kOnlineBoosting)
-    alg = "Online boosting";
-  else if (algo_ == kMiltrack)
-    alg = "Miltrack";
-  else if (algo_ == kKalman)
-    alg = "Kalman/" + params_[0].GetS();
-
-  if (bgs_ != kBgsNone)
-    alg += " + BGS";
 
   return alg;
 }
@@ -74,10 +53,6 @@ QString TrackingTask::algorithm_str() const {
 const Param &TrackingTask::param(int i) const {
   assert(0 <= i && i < params_.count());
   return params_.at(i);
-}
-
-TrackingTask::BGS TrackingTask::bgs() const {
-  return bgs_;
 }
 
 void TrackingTask::set_object(const cv::Rect &object) {
@@ -156,22 +131,18 @@ void TrackingTask::ClearResults() {
 }
 
 QDataStream &operator<<(QDataStream &out, const TrackingTask *t) {
-  out << quint32(static_cast<int>(t->algo_)) << t->params_ <<
-         quint32(static_cast<int>(t->bgs_)) << quint32(t->bgs_erode_) <<
-         quint32(t->bgs_dilate_) << t->object_ << t->first_frame_ <<
-         t->completed_ << t->results_ << t->active_ << t->color_;
+  out << quint32(static_cast<int>(t->algo_)) << t->params_ << t->object_ <<
+         t->first_frame_ << t->completed_ << t->results_ << t->active_ <<
+         t->color_;
   return out;
 }
 
 QDataStream &operator>>(QDataStream &in, TrackingTask *t) {
   assert(t != nullptr);
   int c = 0;
-  int d = 0;
-  in >> c >> t->params_ >> d >> t->bgs_erode_ >> t->bgs_dilate_ >> t->object_ >>
-        t->first_frame_ >> t->completed_ >> t->results_ >> t->active_ >>
-        t->color_;
+  in >> c >> t->params_ >> t->object_ >> t->first_frame_ >> t->completed_ >>
+        t->results_ >> t->active_ >> t->color_;
   t->algo_ = static_cast<TrackingTask::Algorithm>(c);
-  t->bgs_ = static_cast<TrackingTask::BGS>(d);
   return in;
 }
 
@@ -297,14 +268,6 @@ cv::Rect TrackingTask::QRect2CvRect(const QRect &q) {
 
 int TrackingTask::rand_int(int low, int high) {
   return qrand() % ((high + 1) - low) + low;
-}
-
-int TrackingTask::bgs_erode() const {
-  return bgs_erode_;
-}
-
-int TrackingTask::bgs_dilate() const {
-  return bgs_dilate_;
 }
 
 }  // namespace Multitrack
