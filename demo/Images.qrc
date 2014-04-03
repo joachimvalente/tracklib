@@ -1,0 +1,19 @@
+<RCC>
+    <qresource prefix="/icons">
+        <file>images/fileopen.png</file>
+        <file>images/newfile.png</file>
+        <file>images/button_next_blue.png</file>
+        <file>images/button_pause_blue.png</file>
+        <file>images/button_play_blue.png</file>
+        <file>images/button_previous_blue.png</file>
+        <file>images/button_rewind_blue.png</file>
+        <file>images/add.png</file>
+        <file>images/remove.png</file>
+        <file>images/modify.png</file>
+        <file>images/copy.png</file>
+        <file>images/question-mark.png</file>
+        <file>images/run.png</file>
+        <file>images/wait.png</file>
+        <file>images/export.png</file>
+    </qresource>
+</RCC>

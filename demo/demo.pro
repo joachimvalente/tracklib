@@ -27,7 +27,20 @@ SOURCES += main.cpp\
     ../tl_gpu/templatematchingdetectorgpu.cpp \
     ../tl_util/color.cpp \
     ../tl_util/conversions.cpp \
-    ../tl_util/geometry.cpp
+    ../tl_util/geometry.cpp \
+    abstractplayer.cpp \
+    exportdialog.cpp \
+    frameplayer.cpp \
+    param.cpp \
+    project.cpp \
+    projectinfowidget.cpp \
+    projectwidget.cpp \
+    recentproject.cpp \
+    sourceform.cpp \
+    trackingtask.cpp \
+    trackingtaskdialog.cpp \
+    videoplayer.cpp \
+    welcomewidget.cpp
 
 HEADERS  += mainwindow.h \
     ../common.h \
@@ -44,9 +57,28 @@ HEADERS  += mainwindow.h \
     ../tl_gpu/templatematchingdetectorgpu.h \
     ../tl_util/color.h \
     ../tl_util/conversions.h \
-    ../tl_util/geometry.h
+    ../tl_util/geometry.h \
+    abstractplayer.h \
+    exportdialog.h \
+    frameplayer.h \
+    param.h \
+    project.h \
+    projectinfowidget.h \
+    projectwidget.h \
+    recentproject.h \
+    sourceform.h \
+    trackingtask.h \
+    trackingtaskdialog.h \
+    videoplayer.h \
+    welcomewidget.h
 
-FORMS    += mainwindow.ui
+FORMS    += mainwindow.ui \
+    exportdialog.ui \
+    projectinfowidget.ui \
+    projectwidget.ui \
+    sourceform.ui \
+    trackingtaskdialog.ui \
+    welcomewidget.ui
 
 INCLUDEPATH += .. \
             /opt/local/include
@@ -60,3 +92,6 @@ LIBS += -L/opt/local/lib/ \
 
 INCLUDEPATH += /opt/local/include
 DEPENDPATH += /opt/local/include
+
+RESOURCES += \
+    Images.qrc
